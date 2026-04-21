@@ -1,0 +1,44 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local validation and temporary data
+.validation_data/
+.tmp/
+tmp/
+temp/
+
+# Local mental-health records: never publish these
+not_alone_care_data/
+cure_yourself_data/
+event_log.csv
+daily_summary.csv
+support_contacts.csv
+settings.json
+
+# Local exports and backups that may contain sensitive records
+*_event_log.csv
+*_daily_summary.csv
+*_support_contacts.csv
+*.bak
+*.backup
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Test and coverage output
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log

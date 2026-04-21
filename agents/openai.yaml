@@ -1,0 +1,6 @@
+interface:
+  display_name: "You Are Not Alone"
+  short_description: "低负担心理健康陪伴、记录与危机导航"
+  default_prompt: "Use $not-alone-care-skill to provide a gentle mental-health check-in, route risk safely, and save only consented local records."
+policy:
+  allow_implicit_invocation: true
