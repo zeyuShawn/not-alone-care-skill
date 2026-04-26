@@ -1,47 +1,63 @@
-# Privacy and Consent
+﻿# Privacy and Consent
 
-Mental-health records are sensitive even when saved locally.
+Mental-health records are sensitive even in local storage.
 
 ## Default Privacy Position
 
-- Save only minimal structured summaries.
+- Save minimal structured summaries.
 - Do not save raw conversation text by default.
-- Ask before saving each event unless the user has configured explicit ongoing consent.
-- Let the user skip, inspect, summarize, or delete records.
-- Warn that local files may be visible to other users of the computer.
+- Ask before saving each entry unless ongoing consent is configured.
+- Allow inspect/update/delete at user request.
+- Warn about shared-device visibility risk.
+
+## Storage Isolation Rule
+
+Mental-health CSV and ver2 non-clinical JSON must stay separated.
+
+Mental-health CSV:
+
+- `event_log.csv`
+- `daily_summary.csv`
+- `support_contacts.csv`
+
+ver2 JSON:
+
+- `outing_preferences.json`
+- `career_profile.json`
+- `job_posts_cache.json`
+- `exports/roundtrip/*`
+
+Do not write outing/career/job payloads into mental-health CSV.
 
 ## Consent Before Saving
 
-Use language like:
+Example:
 
-> 我可以把这次整理成一条本地 CSV 记录，方便以后看趋势。不会保存完整聊天原文。可以保存吗？
+> 我可以把这次整理成一条本地记录，只保存必要摘要，不存完整聊天原文。可以保存吗？
 
-For high-sensitivity content:
+For high sensitivity:
 
-> 这部分比较敏感。我可以只保存一个很粗的标签，比如“风险信号出现”，不保存细节。你愿意这样记录吗？
+> 这部分比较敏感。我可以只保存一个粗粒度标签，不保存细节。你愿意吗？
 
-## No Consent
+If user declines, do not save and continue support.
 
-If the user declines:
+## External Sharing Prohibition
 
-- Do not save.
-- Do not argue.
-- Continue support normally.
+Without explicit consent, do not send local mental-health records to:
 
-## Delete Requests
+- job platforms,
+- browser forms,
+- third-party apps,
+- public links.
 
-If the user asks to delete records:
+## Deletion Requests
 
-- Confirm the scope: today, a date range, a file, support contacts, or all local records.
-- Use `scripts/delete_log_entries.py` for supported deletions.
-- Do not delete unrelated files.
+- Confirm scope (single date/range/file/contact/all).
+- Use `scripts/delete_log_entries.py` for CSV deletions.
+- For JSON data, delete only requested keys/files.
+- Never delete unrelated files.
 
-## Shared Computer Warning
+## Encryption Note
 
-Use when first initializing data:
-
-> 这些记录会保存在你的电脑本地。如果这台电脑会被别人使用，建议谨慎保存敏感内容。
-
-## Encryption
-
-First version does not encrypt CSV files. If the user asks for stronger privacy, suggest system-level encrypted folders, encrypted archives, password managers, or a future encrypted storage option.
+Current version does not add built-in file encryption.
+If user needs stronger privacy, recommend encrypted folders/system-level encryption.

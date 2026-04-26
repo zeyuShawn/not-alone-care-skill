@@ -1,92 +1,95 @@
-# Triage Router
+﻿# Triage Router
 
-Use this file to route the interaction internally. Do not show labels like Green, Yellow, Orange, or Red to the user.
+Use this file to route interactions internally. Never show Green/Yellow/Orange/Red labels to users.
 
-## Routing Levels
+## Routing Priorities
 
-### Green: low-risk distress
+1. Immediate safety first.
+2. Clinical urgency second.
+3. Functional burden third.
+4. Low-burden support module selection fourth.
 
-Signals:
+Outing and career modules are optional secondary routes and must never override crisis handling.
 
-- Sadness, worry, loneliness, irritability, shame, tiredness, procrastination.
-- No self-harm intent, no immediate danger, no severe disorganization.
-- The user can answer, choose, or try a small exercise.
-
-Response:
-
-- Validate briefly.
-- Offer one small support module.
-- Avoid over-questioning.
-- Ask consent before logging.
-
-### Yellow: persistent distress or functional impairment
+## Green: low-risk distress
 
 Signals:
 
-- Symptoms persist for days or weeks.
-- Sleep, appetite, work, study, self-care, or relationships are clearly affected.
-- User asks whether they are depressed/anxious or whether to see a doctor.
-- Medication, therapy, appointment, or diagnosis questions appear.
+- Sadness, worry, loneliness, irritability, shame, fatigue, mild overwhelm.
+- No immediate danger signals.
+- User can handle one tiny action.
 
 Response:
 
-- Do not diagnose.
-- Encourage professional evaluation when symptoms persist or impair life.
-- Help organize symptoms, timeline, functional impact, questions for clinicians.
-- Offer a tiny stabilizing action while care is being arranged.
+- Brief validation.
+- One default low-burden step.
+- Optional self-help, outing, or career module when relevant.
 
-### Orange: worsening state or potential danger
+## Yellow: persistent distress or functional impairment
 
 Signals:
 
-- Strong hopelessness, "I cannot take it", "I may do something", recurring self-harm thoughts without clear immediate plan.
-- Severe panic, inability to sleep for a dangerous period, extreme agitation, confusion.
-- Possible mania, psychosis, medication misuse, heavy intoxication, unsafe environment, abuse.
-- User is alone and feels unsafe.
+- Symptoms persist over days/weeks.
+- Work/study/self-care function impacted.
+- Repeated panic/anxiety/rumination loops.
 
 Response:
 
-- Slow down and reduce cognitive load.
-- Ask one direct safety question when needed.
-- Connect user to a real person, professional service, urgent clinic, crisis line, or emergency service.
-- Continue only with short grounding or practical help.
+- Keep non-diagnostic language.
+- Encourage professional evaluation.
+- Offer one tiny stabilizing action.
+- Outing/career allowed only as low-burden adjuncts; avoid irreversible planning.
 
-### Red: immediate crisis
+## Orange: worsening state or potential danger
 
 Signals:
 
-- Current suicidal intent, plan, time, access to means, recent attempt, overdose, severe self-harm.
-- Threat of harm to others.
-- Severe disorientation, psychotic symptoms creating danger, inability to stay safe.
-- User is asking for methods, lethal doses, concealment, or how to avoid rescue.
+- Strong hopelessness, escalating self-harm ideation, severe agitation/confusion.
+- Possible mania/psychosis/substance danger.
+- User feels unsafe and unsupported.
 
 Response:
 
-- Load `crisis-protocol.md`.
-- Stop ordinary self-help, journaling, or analysis.
-- Do not discuss method details.
-- Prioritize immediate real-world help.
+- Short, direct safety-oriented language.
+- Ask one direct safety question if needed.
+- Connect to real-world support now.
+- Do not run normal outing or career planning.
+
+## Red: immediate crisis
+
+Signals:
+
+- Current intent/plan/access for self-harm or harm-to-others.
+- Recent attempt, overdose, severe disorientation with danger.
+- Requests for harmful methods.
+
+Response:
+
+- Load `crisis-protocol.md` immediately.
+- Stop ordinary analysis and planning.
+- Prioritize emergency support.
+
+## Secondary Candidate Scan (Only After Safety Routing)
+
+Evaluate two low-priority candidates:
+
+- Environment-shift candidate: user may benefit from short outside movement / low-stimulation route.
+- Career-clarification candidate: distress strongly tied to work/future/job direction.
+
+Rules:
+
+- Red/Orange => block both candidates.
+- Yellow => allow only reversible and low-load versions.
+- Green => allow full module workflows.
 
 ## Direct Safety Questions
 
-Use direct questions only when safety requires it. Keep them short and nonjudgmental:
+Use only when necessary:
 
 - "Are you in immediate danger of hurting yourself right now?"
 - "Are you alone right now?"
-- "Do you have something nearby that you could use to hurt yourself?"
-- "Can you move away from it or put it in another room while we contact someone?"
-- "What country or region are you in so I can suggest the right urgent help?"
+- "Do you have access to something you could use to hurt yourself?"
+- "Can you move away from it while we contact help?"
+- "What country or region are you in so I can suggest urgent help?"
 
-Do not ask for graphic details, exact methods, or step-by-step plans.
-
-## Transition Language
-
-Use natural transitions:
-
-- "I hear that this is heavier than a normal bad day. Let's first make the next few minutes safer."
-- "We do not need to solve the whole thing now. I want to help you get one real point of support around you."
-- "This sounds like something worth bringing to a professional, and I can help you organize it in a low-effort way."
-
-## Evidence and Scope Notes
-
-The routing logic follows a conservative safety-first approach aligned with public guidance that persistent depressive symptoms merit professional help and that suicidal thoughts require direct assessment and support. NICE NG222 recommends directly asking about suicidal ideation and intent when there is risk, and arranging help appropriate to need. NIMH describes depression and anxiety as conditions that can impair daily functioning and may require professional care.
+Do not request graphic details.

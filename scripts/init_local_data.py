@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import json
@@ -7,12 +7,34 @@ from _local_data import ensure_data_dir
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Initialize local not-alone-care CSV data.")
-    parser.add_argument("--data-dir", default=None, help="Target data directory. Defaults to ~/not_alone_care_data.")
+    parser = argparse.ArgumentParser(description="Initialize local not-alone-care data files.")
+    parser.add_argument(
+        "--data-dir",
+        default=None,
+        help="Target data directory. Defaults to ~/not_alone_care_data.",
+    )
     args = parser.parse_args()
 
     root = ensure_data_dir(args.data_dir)
-    print(json.dumps({"data_dir": str(root), "status": "ok"}, ensure_ascii=False))
+    payload = {
+        "data_dir": str(root),
+        "status": "ok",
+        "csv_files": [
+            "event_log.csv",
+            "daily_summary.csv",
+            "support_contacts.csv",
+        ],
+        "json_files": [
+            "settings.json",
+            "outing_preferences.json",
+            "career_profile.json",
+            "job_posts_cache.json",
+        ],
+        "directories": [
+            "exports/roundtrip",
+        ],
+    }
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
     return 0
 
 
