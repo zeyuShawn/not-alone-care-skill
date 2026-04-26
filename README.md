@@ -1,31 +1,212 @@
-﻿# You Are Not Alone
+﻿<div align="center">
 
-<p align="center">
+# You Are Not Alone
+
+<p>
   <strong>Safety-first mental-health support with low-burden routing, crisis navigation, optional outing recovery, and career-direction clarification.</strong>
 </p>
+
+<p>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
+  <img alt="Safety first" src="https://img.shields.io/badge/safety--first-crisis--aware-blue.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-ver2-black.svg">
+  <img alt="Local first" src="https://img.shields.io/badge/local--first-privacy--minded-5f4bb6.svg">
+  <img alt="Modules" src="https://img.shields.io/badge/modules-outing%20%7C%20career%20%7C%20export-2c7a7b.svg">
+</p>
+
+<p>
+  <a href="#quick-start">Quick Start</a> |
+  <a href="#what-it-does">What It Does</a> |
+  <a href="#whats-new-in-ver2">What's New in ver2</a> |
+  <a href="#demos">Demos</a> |
+  <a href="#web-prompt">Web Prompt</a> |
+  <a href="#local-data-and-privacy">Local Data and Privacy</a> |
+  <a href="#safety-boundary">Safety Boundary</a>
+</p>
+
+</div>
+
+---
 
 `not-alone-care-skill` is a mental-health support skill, not a diagnosis or treatment tool.
 
 Core principle: the user should not carry extra cognitive load when distressed. The assistant routes risk first, gives a default low-burden step, and only then introduces optional modules when safe.
 
-## What ver2 adds
+It helps an AI assistant respond more carefully when a user reports depression, anxiety, panic, emotional distress, loss of function, loneliness, hopelessness, self-harm thoughts, suicidal ideation, medication concerns, or difficulty seeking care.
 
-- `Gentle Outing Planner`: nearby short outing, city micro-trip, and condition-gated cross-city/overnight planning.
-- `Roundtrip Export`: POI-rich exports for copy, screenshot, OCR, and local HTML import.
-- `Career Compass`: low-burden career-direction clarification.
-- `Job Market Browser`: browser-based job-post collection with consent checkpoints.
-- `Local Code Career Profile`: evidence-based skill profile from user-authorized local projects.
-- Data isolation with independent JSON files (`outing_preferences.json`, `career_profile.json`, `job_posts_cache.json`) separated from mental-health CSV logs.
+The workflow keeps one practical rule: a distressed user should not have to choose the right mode. The assistant quietly checks for risk signals, keeps each response low-burden, and shifts toward self-help, care preparation, support-network drafting, or crisis navigation as needed.
 
-## Safety boundary
+> [!IMPORTANT]
+> This project is not a diagnosis tool, not a therapist, and not a replacement for emergency or professional care. If you or someone else may be in immediate danger, contact local emergency services, a crisis line, or a trusted person nearby.
 
-- Must not diagnose.
-- Must not replace professional or emergency care.
-- Must prioritize crisis safety over all normal planning.
-- Must not share mental-health records with external services without consent.
-- Must not auto-apply jobs, auto-contact recruiters, or auto-submit personal information.
+---
 
-## Repository layout
+## What It Does
+
+| Area | What the skill supports |
+| :--- | :--- |
+| **First response** | Gentle, short replies for low mood, anxiety, shame, loneliness, or overwhelm. |
+| **Stabilization** | Grounding, tiny next steps, worry containment, and low-friction evening check-ins. |
+| **Crisis-aware routing** | Self-harm, suicidal thoughts, overdose, harm to others, severe confusion, and unsafe situations. |
+| **Care preparation** | Notes for doctors, therapists, school services, workplace support, urgent care, or emergency care. |
+| **Local memory** | Optional consented logs for mood records, daily summaries, support contacts, and trend summaries. |
+| **Web fallback** | A standalone prompt for browser-based LLMs when the local skill is unavailable. |
+| **Gentle Outing Planner (ver2)** | Nearby short outings, city micro-trips, and condition-gated cross-city or overnight plans. |
+| **Roundtrip Export (ver2)** | POI-rich itinerary export for copy, screenshot, OCR, and local HTML import. |
+| **Career Compass (ver2)** | Low-burden career-direction clarification tied to current emotional load. |
+| **Job Market Browser (ver2)** | Browser-based job-post collection with explicit consent checkpoints. |
+| **Local Code Career Profile (ver2)** | Evidence-based skill profiling from user-authorized local projects only. |
+
+---
+
+## What's New in ver2
+
+- Added two optional recovery modules under the same safety framework: `Gentle Outing Planner`, `Career Compass`.
+- Added roundtrip itinerary export pipeline: `scripts/export_roundtrip_itinerary.py`, `scripts/validate_itinerary_export.py`.
+- Added career data and analysis pipeline: `scripts/collect_job_posts_browser.py`, `scripts/normalize_job_posts.py`, `scripts/analyze_local_code_profile.py`, `scripts/rank_job_fit.py`, `scripts/manage_profile_data.py`.
+- Added strict data-domain isolation: Mental-health CSV logs remain separate from outing/career/job JSON stores.
+
+---
+
+## Quick Start
+
+Use the skill directly:
+
+```text
+Use $not-alone-care-skill to provide safety-first mental-health support, then optionally guide low-burden outing or career clarification when appropriate, and save only consented local records.
+```
+
+Use the web fallback:
+
+```text
+Please follow the uploaded You Are Not Alone Web Prompt. Start with a low-burden check-in and do not ask me to choose a module.
+```
+
+Initialize local data:
+
+```bash
+python scripts/init_local_data.py
+```
+
+Append one consented event entry:
+
+```bash
+python scripts/append_event_log.py --field save_consent=true --field session_type=checkin --field mood_score=4 --field anxiety_score=6 --field energy_score=3
+```
+
+Summarize recent trends without diagnosis:
+
+```bash
+python scripts/summarize_trends.py
+```
+
+---
+
+## Demos
+
+### Demo 1: Core low-burden support
+
+```text
+User:
+I have been anxious for days and I don't know whether I should see someone.
+
+Assistant:
+That sounds exhausting, especially if this has been going on for several days. I cannot diagnose what is happening, but this is absolutely worth bringing to a professional.
+
+If you want, I can help you make a short care note for a doctor or therapist: how long this has lasted, what changed in sleep/appetite, how it affects your day, and what you want to ask.
+```
+
+### Demo 2: ver2 gentle outing planning
+
+```text
+User:
+I feel trapped at home and my head is too full. I cannot think.
+
+Assistant:
+You do not need to solve everything right now. Let's make one low-burden environment shift.
+
+Default draft: a 40-minute route with one open-air point, one sit-down point, and an easy return option.
+If you can, give me only a rough area (city or district). If not, I can give you a generic safe version first.
+```
+
+### Demo 3: ver2 career clarification + job fit
+
+```text
+User:
+I am not sure what direction to take. Job searching makes me panic.
+
+Assistant:
+Let's keep this low-pressure. We can do two tracks in parallel:
+1) identify what your current projects already prove,
+2) compare that with a small set of real job posts.
+
+You only need to choose one first step: "scan projects" or "check market".
+```
+
+### Demo 4: ver2 roundtrip export flow
+
+```bash
+# 1) Export POI-rich itinerary assets
+python scripts/export_roundtrip_itinerary.py --itinerary itinerary.json
+
+# 2) Validate export quality and sensitive-content rules
+python scripts/validate_itinerary_export.py --itinerary itinerary.json --export-dir ~/not_alone_care_data/exports/roundtrip/2026-04-25-example
+```
+
+---
+
+## Web Prompt
+
+If local scripting is unavailable, use the standalone web prompt:
+
+- Prompt file: [网页版/not-alone-care-web-prompt.md](网页版/not-alone-care-web-prompt.md)
+
+The web prompt is designed for browser-based LLM usage and avoids pretending it can write local files.
+
+---
+
+## Local Data and Privacy
+
+Default local path:
+
+```text
+~/not_alone_care_data/
+```
+
+Data domains:
+
+| Domain | Files |
+|---|---|
+| Mental-health logs | `event_log.csv`, `daily_summary.csv`, `support_contacts.csv` |
+| ver2 outing/career/job stores | `outing_preferences.json`, `career_profile.json`, `job_posts_cache.json`, `exports/roundtrip/` |
+
+Privacy defaults:
+
+- Save minimal structured summaries, not raw conversation text by default.
+- Ask for consent before saving each record type unless ongoing consent is explicitly configured.
+- Let users inspect, summarize, update, or delete records.
+- Keep mental-health records isolated from external websites and job platforms unless the user explicitly consents.
+
+---
+
+## Safety Boundary
+
+This project deliberately avoids clinical overreach.
+
+- Do not diagnose mental disorders.
+- Do not replace therapy, medical care, emergency services, or crisis lines.
+- Do not advise starting, stopping, increasing, decreasing, or substituting medication.
+- Do not provide self-harm methods, lethal means, concealment advice, or detailed harmful plans.
+- Do not save local records without consent.
+- Do not send mental-health records to external services without explicit consent.
+- Do not auto-apply jobs, auto-contact recruiters, or auto-submit personal information.
+
+---
+
+## Repository Layout
+
+<details open>
+<summary><strong>View Repository Tree</strong></summary>
 
 ```text
 not-alone-care-skill/
@@ -70,71 +251,36 @@ not-alone-care-skill/
     └── not-alone-care-web-prompt.md
 ```
 
-## Local data
+</details>
 
-Default path:
+---
+
+## Suggested GitHub Topics
+
+<details>
+<summary><strong>View Suggested Topics</strong></summary>
 
 ```text
-~/not_alone_care_data/
+mental-health
+mental-health-chatbot
+llm
+ai-companion
+crisis-support
+suicide-prevention
+anxiety
+depression
+self-help
+prompt-engineering
+local-first
+privacy
+career-guidance
+travel-planning
 ```
 
-Mental-health logs:
+</details>
 
-- `event_log.csv`
-- `daily_summary.csv`
-- `support_contacts.csv`
-
-ver2 JSON data:
-
-- `outing_preferences.json`
-- `career_profile.json`
-- `job_posts_cache.json`
-- `exports/roundtrip/`
-
-## Quick start
-
-Initialize local data:
-
-```bash
-python scripts/init_local_data.py
-```
-
-Append one consented event record:
-
-```bash
-python scripts/append_event_log.py --field save_consent=true --field session_type=checkin --field mood_score=4
-```
-
-Export itinerary assets:
-
-```bash
-python scripts/export_roundtrip_itinerary.py --itinerary itinerary.json
-```
-
-Validate itinerary export:
-
-```bash
-python scripts/validate_itinerary_export.py --itinerary itinerary.json --export-dir ~/not_alone_care_data/exports/roundtrip/2026-04-25-example
-```
-
-Normalize job posts:
-
-```bash
-python scripts/normalize_job_posts.py --input raw_posts.json --output normalized_posts.json
-```
-
-Analyze authorized local projects:
-
-```bash
-python scripts/analyze_local_code_profile.py --consent true --project repo1=~/work/project-a --target-role "Data Engineer"
-```
-
-Rank job fit:
-
-```bash
-python scripts/rank_job_fit.py --profile ~/not_alone_care_data/career_profile.json --posts ~/not_alone_care_data/job_posts_cache.json
-```
+---
 
 ## License
 
-MIT License. See `LICENSE`.
+MIT License. See [LICENSE](LICENSE).

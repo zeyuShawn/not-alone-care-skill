@@ -42,3 +42,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local drafts and planning notes (keep local, do not publish)
+修改/
