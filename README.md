@@ -108,6 +108,42 @@ python scripts/validate_local_data.py
 
 ---
 
+## Publish Changes to GitHub
+
+If you are working from a local clone and want to send the current committed changes to GitHub:
+
+```bash
+# 1) Confirm what changed and which branch you are on
+git status
+git branch --show-current
+
+# 2) If no GitHub remote is configured, add one once
+git remote add origin git@github.com:<your-user-or-org>/<your-repo>.git
+
+# 3) Push the current branch to GitHub
+git push -u origin HEAD
+```
+
+If `origin` already exists, skip step 2. To check remotes:
+
+```bash
+git remote -v
+```
+
+To update this README in the future:
+
+```bash
+# Edit README.md, then review and commit it
+git diff README.md
+git add README.md
+git commit -m "Update README"
+git push
+```
+
+If GitHub rejects the push, verify that you have access to the repository and that your SSH key or personal access token is configured.
+
+---
+
 ## Demos
 
 ### Demo 1: Core low-burden support
