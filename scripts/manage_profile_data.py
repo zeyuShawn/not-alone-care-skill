@@ -1,7 +1,8 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import json
+from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict
 
@@ -127,7 +128,7 @@ def main() -> int:
     if args.command == "reset":
         if args.confirm != "YES":
             raise SystemExit("Refusing reset. Pass --confirm YES")
-        reset_payload = dict(default)
+        reset_payload = deepcopy(default)
         if "updated_at" in reset_payload:
             reset_payload["updated_at"] = now_iso()
         write_json(path, reset_payload)

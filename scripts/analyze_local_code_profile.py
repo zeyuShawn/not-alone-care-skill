@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import json
@@ -234,7 +234,7 @@ def detect_tools(root: Path, files: Iterable[Path]) -> List[str]:
     return sorted(set(tools))
 
 
-def scan_project(alias: str, root: Path, max_files: int) -> Dict[str, Any]:
+def scan_project(alias: str, root: Path, max_files: int, include_path: bool = False) -> Dict[str, Any]:
     if not root.exists() or not root.is_dir():
         raise SystemExit(f"Project path not found or not directory: {root}")
 
@@ -275,7 +275,6 @@ def scan_project(alias: str, root: Path, max_files: int) -> Dict[str, Any]:
 
     evidence = {
         "alias": alias,
-        "path": str(root),
         "file_count_scanned": len(files),
         "top_languages": top_languages,
         "frameworks": frameworks,
@@ -284,6 +283,8 @@ def scan_project(alias: str, root: Path, max_files: int) -> Dict[str, Any]:
         "has_readme": has_readme,
         "last_modified": mtime,
     }
+    if include_path:
+        evidence["path"] = str(root)
     return evidence
 
 
@@ -313,6 +314,7 @@ def main() -> int:
     parser.add_argument("--avoid", action="append", default=[])
     parser.add_argument("--notes", default="")
     parser.add_argument("--max-files", type=int, default=4000)
+    parser.add_argument("--include-path", action="store_true", help="Store absolute project paths in career_profile.json; off by default for privacy.")
     args = parser.parse_args()
 
     if not truthy(args.consent):
@@ -328,7 +330,7 @@ def main() -> int:
     all_skills: List[str] = []
 
     for alias, path in project_specs:
-        evidence = scan_project(alias, path, args.max_files)
+        evidence = scan_project(alias, path, args.max_files, include_path=args.include_path)
         project_evidence.append(evidence)
         sources.append(
             {

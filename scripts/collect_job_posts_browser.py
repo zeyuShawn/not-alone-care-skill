@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import csv
@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
-from _local_data import JOB_POSTS_CACHE_DEFAULT, ensure_data_dir, now_iso, read_json, write_json
+from _local_data import JOB_POSTS_CACHE_DEFAULT, ensure_data_dir, now_iso, read_json, truthy, write_json
 
 
 def _load_json(path: Path) -> Any:
@@ -96,6 +96,7 @@ def main() -> int:
     parser.add_argument("--source", default="browser", help="Collection source label.")
     parser.add_argument("--data-dir", default=None)
     parser.add_argument("--append", action="store_true", help="Append to existing cache instead of replacing.")
+    parser.add_argument("--consent", default="", help="Must be true/yes to confirm saving job-search data locally when --input is provided.")
     args = parser.parse_args()
 
     root = ensure_data_dir(args.data_dir)
@@ -107,6 +108,8 @@ def main() -> int:
 
     records: List[Dict[str, Any]] = []
     if args.input:
+        if not truthy(args.consent):
+            raise SystemExit("Refusing to save job posts: --consent must be true when --input is provided.")
         input_path = Path(args.input).expanduser().resolve()
         if not input_path.exists():
             raise SystemExit(f"Input file not found: {input_path}")

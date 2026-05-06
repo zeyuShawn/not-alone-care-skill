@@ -1,0 +1,231 @@
+from __future__ import annotations
+
+import csv
+import json
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+PYTHON = sys.executable
+
+
+def run_script(args: list[str], check: bool = True) -> subprocess.CompletedProcess[str]:
+    result = subprocess.run(
+        [PYTHON, *args],
+        cwd=ROOT,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if check and result.returncode != 0:
+        raise AssertionError(f"command failed: {args}\nstdout={result.stdout}\nstderr={result.stderr}")
+    return result
+
+
+class ScriptSafetyTests(unittest.TestCase):
+    def test_event_requires_consent_and_valid_scores(self) -> None:
+        with tempfile.TemporaryDirectory() as data_dir:
+            no_consent = run_script(
+                ["scripts/append_event_log.py", "--data-dir", data_dir, "--field", "mood_score=4"],
+                check=False,
+            )
+            self.assertNotEqual(no_consent.returncode, 0)
+            self.assertIn("save_consent=true", no_consent.stderr)
+
+            bad_score = run_script(
+                [
+                    "scripts/append_event_log.py",
+                    "--data-dir",
+                    data_dir,
+                    "--field",
+                    "save_consent=true",
+                    "--field",
+                    "mood_score=11",
+                ],
+                check=False,
+            )
+            self.assertNotEqual(bad_score.returncode, 0)
+            self.assertIn("mood_score", bad_score.stderr)
+
+    def test_support_contact_method_requires_second_confirmation(self) -> None:
+        with tempfile.TemporaryDirectory() as data_dir:
+            run_script(
+                [
+                    "scripts/manage_support_contacts.py",
+                    "--data-dir",
+                    data_dir,
+                    "add",
+                    "--field",
+                    "name_or_alias=friend",
+                    "--field",
+                    "contact_method=555-0100",
+                    "--field",
+                    "consent_to_use=true",
+                ]
+            )
+            hidden = run_script(["scripts/manage_support_contacts.py", "--data-dir", data_dir, "show", "--name", "friend"])
+            self.assertNotIn("contact_method", hidden.stdout)
+            refused = run_script(
+                [
+                    "scripts/manage_support_contacts.py",
+                    "--data-dir",
+                    data_dir,
+                    "show",
+                    "--name",
+                    "friend",
+                    "--include-contact-method",
+                ],
+                check=False,
+            )
+            self.assertNotEqual(refused.returncode, 0)
+            revealed = run_script(
+                [
+                    "scripts/manage_support_contacts.py",
+                    "--data-dir",
+                    data_dir,
+                    "show",
+                    "--name",
+                    "friend",
+                    "--include-contact-method",
+                    "--confirm-user-consent",
+                    "YES",
+                ]
+            )
+            self.assertIn("555-0100", revealed.stdout)
+
+    def test_job_cache_save_requires_consent(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            input_path = tmp_path / "jobs.json"
+            input_path.write_text(json.dumps([{"title": "Frontend", "skills": ["React"]}]), encoding="utf-8")
+            data_dir = tmp_path / "data"
+
+            refused = run_script(
+                [
+                    "scripts/collect_job_posts_browser.py",
+                    "--data-dir",
+                    str(data_dir),
+                    "--input",
+                    str(input_path),
+                    "--consent",
+                    "false",
+                ],
+                check=False,
+            )
+            self.assertNotEqual(refused.returncode, 0)
+
+            ok = run_script(
+                [
+                    "scripts/collect_job_posts_browser.py",
+                    "--data-dir",
+                    str(data_dir),
+                    "--input",
+                    str(input_path),
+                    "--consent",
+                    "true",
+                ]
+            )
+            self.assertIn('"status": "ok"', ok.stdout)
+
+    def test_delete_dry_run_and_confirm(self) -> None:
+        with tempfile.TemporaryDirectory() as data_dir:
+            run_script(
+                [
+                    "scripts/append_event_log.py",
+                    "--data-dir",
+                    data_dir,
+                    "--field",
+                    "save_consent=true",
+                    "--field",
+                    "date=2026-05-06",
+                    "--field",
+                    "time=10:00:00",
+                    "--field",
+                    "mood_score=4",
+                ]
+            )
+            dry = run_script(
+                ["scripts/delete_log_entries.py", "--data-dir", data_dir, "--target", "event", "--date", "2026-05-06", "--dry-run"]
+            )
+            self.assertIn('"matched": 1', dry.stdout)
+            with (Path(data_dir) / "event_log.csv").open(encoding="utf-8-sig") as f:
+                self.assertEqual(len(list(csv.DictReader(f))), 1)
+
+            refused = run_script(
+                ["scripts/delete_log_entries.py", "--data-dir", data_dir, "--target", "event", "--date", "2026-05-06"],
+                check=False,
+            )
+            self.assertNotEqual(refused.returncode, 0)
+
+            run_script(
+                [
+                    "scripts/delete_log_entries.py",
+                    "--data-dir",
+                    data_dir,
+                    "--target",
+                    "event",
+                    "--date",
+                    "2026-05-06",
+                    "--confirm",
+                    "YES",
+                ]
+            )
+            with (Path(data_dir) / "event_log.csv").open(encoding="utf-8-sig") as f:
+                self.assertEqual(len(list(csv.DictReader(f))), 0)
+
+    def test_itinerary_scrubs_sensitive_terms_and_validator_uses_shared_patterns(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            itinerary = tmp_path / "itinerary.json"
+            itinerary.write_text(
+                json.dumps(
+                    {
+                        "route_name": "calm",
+                        "city_area": "x",
+                        "pois": [
+                            {"name": "A", "type": "park", "stay": "10", "purpose": "焦虑 pause", "required": True},
+                            {"name": "B", "type": "cafe", "stay": "10", "purpose": "call 13800138000", "required": False},
+                        ],
+                        "minimum_version": "one stop",
+                        "retreat_point": "return",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            out_dir = tmp_path / "out"
+            run_script(["scripts/export_roundtrip_itinerary.py", "--itinerary", str(itinerary), "--output-dir", str(out_dir)])
+            copy_text = (out_dir / "copy.txt").read_text(encoding="utf-8")
+            self.assertIn("[敏感信息已移除]", copy_text)
+            self.assertIn("[敏感定位已移除]", copy_text)
+            self.assertNotIn("13800138000", copy_text)
+
+    def test_code_profile_hides_absolute_path_by_default(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            project = tmp_path / "project"
+            project.mkdir()
+            (project / "app.py").write_text("print('hi')\n", encoding="utf-8")
+            data_dir = tmp_path / "data"
+            run_script(
+                [
+                    "scripts/analyze_local_code_profile.py",
+                    "--data-dir",
+                    str(data_dir),
+                    "--consent",
+                    "true",
+                    "--project",
+                    f"demo={project}",
+                ]
+            )
+            profile = json.loads((data_dir / "career_profile.json").read_text(encoding="utf-8"))
+            evidence = profile["project_evidence"][0]
+            self.assertEqual(evidence["alias"], "demo")
+            self.assertNotIn("path", evidence)
+
+
+if __name__ == "__main__":
+    unittest.main()

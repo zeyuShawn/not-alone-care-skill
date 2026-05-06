@@ -1,4 +1,4 @@
-﻿# Privacy and Consent
+# Privacy and Consent
 
 Mental-health records are sensitive even in local storage.
 
@@ -7,7 +7,8 @@ Mental-health records are sensitive even in local storage.
 - Save minimal structured summaries.
 - Do not save raw conversation text by default.
 - Ask before saving each entry unless ongoing consent is configured.
-- Allow inspect/update/delete at user request.
+- Allow inspect/update/validate/dry-run delete/delete at user request.
+- Validate score ranges, date formats, known fields, and JSON structure before relying on local records.
 - Warn about shared-device visibility risk.
 
 ## Storage Isolation Rule
@@ -53,7 +54,8 @@ Without explicit consent, do not send local mental-health records to:
 ## Deletion Requests
 
 - Confirm scope (single date/range/file/contact/all).
-- Use `scripts/delete_log_entries.py` for CSV deletions.
+- Use `scripts/delete_log_entries.py --dry-run` before destructive CSV deletions when practical.
+- Use `--confirm YES` for destructive CSV deletions.
 - For JSON data, delete only requested keys/files.
 - Never delete unrelated files.
 
@@ -61,3 +63,9 @@ Without explicit consent, do not send local mental-health records to:
 
 Current version does not add built-in file encryption.
 If user needs stronger privacy, recommend encrypted folders/system-level encryption.
+
+## Career and Job Data
+
+- Browser-collected job posts and normalized job caches require explicit local-save consent.
+- Local code analysis stores project aliases by default; absolute paths should be saved only when the user explicitly opts in.
+- Treat career constraints, salary floors, locations, and job-search queries as sensitive even though they are separated from mental-health CSV logs.

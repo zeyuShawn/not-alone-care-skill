@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # You Are Not Alone
 
@@ -100,6 +100,12 @@ Summarize recent trends without diagnosis:
 python scripts/summarize_trends.py
 ```
 
+Validate local data files and schema assumptions:
+
+```bash
+python scripts/validate_local_data.py
+```
+
 ---
 
 ## Demos
@@ -184,8 +190,11 @@ Privacy defaults:
 
 - Save minimal structured summaries, not raw conversation text by default.
 - Ask for consent before saving each record type unless ongoing consent is explicitly configured.
-- Let users inspect, summarize, update, or delete records.
+- Validate local mood/function scores, dates, and known fields before writing records.
+- Let users inspect, summarize, update, validate, dry-run deletion, or delete records.
 - Keep mental-health records isolated from external websites and job platforms unless the user explicitly consents.
+- Require explicit consent before saving browser-collected job posts or normalized job caches.
+- Do not store absolute local code paths in career profiles unless `--include-path` is explicitly used.
 
 ---
 
@@ -234,12 +243,15 @@ not-alone-care-skill/
 │   └── external-data-privacy.md
 ├── scripts/
 │   ├── _local_data.py
+│   ├── _privacy_patterns.py
 │   ├── init_local_data.py
 │   ├── append_event_log.py
 │   ├── append_daily_summary.py
 │   ├── manage_support_contacts.py
 │   ├── summarize_trends.py
 │   ├── delete_log_entries.py
+│   ├── validate_local_data.py
+│   ├── check_crisis_resource_dates.py
 │   ├── export_roundtrip_itinerary.py
 │   ├── validate_itinerary_export.py
 │   ├── collect_job_posts_browser.py
@@ -247,6 +259,8 @@ not-alone-care-skill/
 │   ├── analyze_local_code_profile.py
 │   ├── rank_job_fit.py
 │   └── manage_profile_data.py
+├── tests/
+│   └── test_scripts.py
 └── 网页版/
     └── not-alone-care-web-prompt.md
 ```

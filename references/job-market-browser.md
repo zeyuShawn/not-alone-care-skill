@@ -1,4 +1,4 @@
-﻿# Job Market Browser
+# Job Market Browser
 
 Use this module for browser-based job-post collection under consent gates.
 
@@ -24,7 +24,7 @@ Workflow:
 2. Open site or user URL.
 3. Read list/detail pages.
 4. Capture title/company/city/salary/experience/education/responsibilities/skills/benefits/source URL.
-5. Send raw output to `scripts/normalize_job_posts.py`.
+5. Send raw output to `scripts/normalize_job_posts.py`; use `--consent true` if saving to `job_posts_cache.json`.
 6. Rank with `scripts/rank_job_fit.py`.
 7. Return three classes: `稳妥尝试`, `值得补差`, `暂不建议`.
 
@@ -37,6 +37,7 @@ Stop and confirm before:
 - resume upload,
 - phone/contact form fill,
 - saving personal resume/contact/account data,
+- saving browser-collected job posts or normalized job caches,
 - opening many pages likely to trigger anti-bot measures.
 
 ## Default Prohibitions

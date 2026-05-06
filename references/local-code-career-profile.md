@@ -1,4 +1,4 @@
-﻿# Local Code Career Profile
+# Local Code Career Profile
 
 Use this module to extract evidence-based career signals from authorized local code projects.
 
@@ -7,6 +7,7 @@ Goal: answer "what capability is already evidenced" without exaggeration.
 ## Input Boundary
 
 - Scan only explicitly authorized directories.
+- Store project aliases by default; save absolute local paths only when the user explicitly opts in.
 - Do not read secrets/private accounts/chat history/browser cache.
 - Default skip:
   - `.env`

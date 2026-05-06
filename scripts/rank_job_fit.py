@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import json
@@ -7,6 +7,26 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Set
 
 from _local_data import ensure_data_dir, now_iso
+
+SKILL_SYNONYMS = {
+    "js": "javascript",
+    "ts": "typescript",
+    "nodejs": "node",
+    "node.js": "node",
+    "next.js": "next",
+    "vue.js": "vue",
+    "react.js": "react",
+    "前端": "frontend",
+    "后端": "backend",
+    "全栈": "fullstack",
+    "测试": "testing",
+}
+
+RISK_KEYWORDS = ["加班", "996", "大小周", "夜班", "高压", "抗压", "出差频繁", "night shift", "high pressure", "sales target", "销售指标"]
+
+
+def canonical_token(token: str) -> str:
+    return SKILL_SYNONYMS.get(token, token)
 
 
 def load_json(path: Path) -> Dict[str, Any]:
@@ -19,7 +39,7 @@ def load_json(path: Path) -> Dict[str, Any]:
 def tokenize(text: str) -> List[str]:
     text = text.lower()
     parts = re.split(r"[^a-z0-9\u4e00-\u9fa5+#]+", text)
-    return [part for part in parts if part and len(part) > 1]
+    return [canonical_token(part) for part in parts if part and len(part) > 1]
 
 
 def to_token_set(values: Iterable[str]) -> Set[str]:
@@ -61,14 +81,19 @@ def low_burden_action(category: str, title: str) -> str:
 
 def risk_signal_hit(signals: Iterable[str], constraints: Dict[str, str]) -> bool:
     merged = " ".join(signals).lower()
-    high_load_tokens = ["加班", "996", "night shift", "high pressure", "销售指标", "出差频繁"]
-    if any(token.lower() in merged for token in high_load_tokens):
+    if any(token.lower() in merged for token in RISK_KEYWORDS):
         return True
     energy_limit = str(constraints.get("energy_load_limit", "")).strip().lower()
     if energy_limit and energy_limit in {"low", "低", "轻负担", "low_load"}:
-        if any(token.lower() in merged for token in ["high pressure", "996", "加班"]):
+        if any(token.lower() in merged for token in ["high pressure", "高压", "996", "加班", "夜班"]):
             return True
     return False
+
+
+def extract_risk_signals(post: Dict[str, Any]) -> List[str]:
+    values = post.get("risk_signals", []) + post.get("responsibilities", []) + [post.get("title", "")]
+    merged = " ".join(str(value) for value in values).lower()
+    return [token for token in RISK_KEYWORDS if token.lower() in merged]
 
 
 def normalize_post(post: Dict[str, Any]) -> Dict[str, Any]:
@@ -122,6 +147,8 @@ def main() -> int:
         if not isinstance(raw, dict):
             continue
         post = normalize_post(raw)
+        auto_risks = extract_risk_signals(post)
+        post["risk_signals"] = sorted(set(post["risk_signals"] + auto_risks))
 
         requirement_tokens = to_token_set(post["skills"] + post["responsibilities"] + [post["title"]])
         if not requirement_tokens:
@@ -131,6 +158,8 @@ def main() -> int:
         gap_tokens = sorted(requirement_tokens.difference(evidence_tokens))
 
         overlap_score = len(overlap_tokens) / max(1, len(requirement_tokens))
+        information_count = len(post["skills"]) + len(post["responsibilities"])
+        confidence = "low" if not evidence_tokens or information_count < 2 else "medium" if information_count < 5 else "high"
         risk_hit = risk_signal_hit(post["risk_signals"], constraints)
 
         final_score = max(0.0, round(overlap_score - (0.15 if risk_hit else 0.0), 4))
@@ -145,6 +174,8 @@ def main() -> int:
             reason_bits.append(f"主要缺口: {', '.join(gap_tokens[:5])}")
         if risk_hit:
             reason_bits.append("风险信号与当前承受上限可能不匹配")
+        if confidence == "low":
+            reason_bits.append("信息不足，置信度较低")
 
         ranking.append(
             {
@@ -152,6 +183,7 @@ def main() -> int:
                 "company": post["company"],
                 "category": category,
                 "score": final_score,
+                "confidence": confidence,
                 "reason": "；".join(reason_bits),
                 "overlap_tokens": overlap_tokens[:12],
                 "gap_tokens": gap_tokens[:12],
