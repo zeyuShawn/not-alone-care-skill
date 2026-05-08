@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 # You Are Not Alone
 
@@ -100,6 +100,48 @@ Summarize recent trends without diagnosis:
 python scripts/summarize_trends.py
 ```
 
+Validate local data files and schema assumptions:
+
+```bash
+python scripts/validate_local_data.py
+```
+
+---
+
+## Publish Changes to GitHub
+
+If you are working from a local clone and want to send the current committed changes to GitHub:
+
+```bash
+# 1) Confirm what changed and which branch you are on
+git status
+git branch --show-current
+
+# 2) If no GitHub remote is configured, add one once
+git remote add origin git@github.com:<your-user-or-org>/<your-repo>.git
+
+# 3) Push the current branch to GitHub
+git push -u origin HEAD
+```
+
+If `origin` already exists, skip step 2. To check remotes:
+
+```bash
+git remote -v
+```
+
+To update this README in the future:
+
+```bash
+# Edit README.md, then review and commit it
+git diff README.md
+git add README.md
+git commit -m "Update README"
+git push
+```
+
+If GitHub rejects the push, verify that you have access to the repository and that your SSH key or personal access token is configured.
+
 ---
 
 ## Demos
@@ -184,8 +226,11 @@ Privacy defaults:
 
 - Save minimal structured summaries, not raw conversation text by default.
 - Ask for consent before saving each record type unless ongoing consent is explicitly configured.
-- Let users inspect, summarize, update, or delete records.
+- Validate local mood/function scores, dates, and known fields before writing records.
+- Let users inspect, summarize, update, validate, dry-run deletion, or delete records.
 - Keep mental-health records isolated from external websites and job platforms unless the user explicitly consents.
+- Require explicit consent before saving browser-collected job posts or normalized job caches.
+- Do not store absolute local code paths in career profiles unless `--include-path` is explicitly used.
 
 ---
 
@@ -234,12 +279,15 @@ not-alone-care-skill/
 │   └── external-data-privacy.md
 ├── scripts/
 │   ├── _local_data.py
+│   ├── _privacy_patterns.py
 │   ├── init_local_data.py
 │   ├── append_event_log.py
 │   ├── append_daily_summary.py
 │   ├── manage_support_contacts.py
 │   ├── summarize_trends.py
 │   ├── delete_log_entries.py
+│   ├── validate_local_data.py
+│   ├── check_crisis_resource_dates.py
 │   ├── export_roundtrip_itinerary.py
 │   ├── validate_itinerary_export.py
 │   ├── collect_job_posts_browser.py
@@ -247,6 +295,8 @@ not-alone-care-skill/
 │   ├── analyze_local_code_profile.py
 │   ├── rank_job_fit.py
 │   └── manage_profile_data.py
+├── tests/
+│   └── test_scripts.py
 └── 网页版/
     └── not-alone-care-web-prompt.md
 ```

@@ -1,6 +1,7 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
+import importlib
 import json
 import re
 from html import escape
@@ -8,19 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 from _local_data import ensure_data_dir, ensure_roundtrip_export_dir
-
-SENSITIVE_TERMS = [
-    "自伤",
-    "自杀",
-    "轻生",
-    "suicide",
-    "self-harm",
-    "overdose",
-    "抑郁",
-    "焦虑",
-    "panic",
-    "危机",
-]
+from _privacy_patterns import scrub_sensitive_text
 
 GENERIC_POI_PATTERNS = [
     r"^附近[\u4e00-\u9fa5A-Za-z]+$",
@@ -30,19 +19,11 @@ GENERIC_POI_PATTERNS = [
     r"^cafe$",
 ]
 
-ADDRESS_PATTERNS = [
-    r"\d{6}",
-    r"\b\d{11}\b",
-    r"\b\d{2,3}-\d{7,8}\b",
-    r"\d+\.\d{5,}\s*,\s*\d+\.\d{5,}",
-]
-
 
 def _load_yaml(path: Path, text: str) -> Dict[str, Any]:
-    try:
-        import yaml  # type: ignore
-    except ImportError as exc:
-        raise SystemExit("YAML input requires PyYAML. Please install pyyaml or provide JSON.") from exc
+    if importlib.util.find_spec("yaml") is None:
+        raise SystemExit("YAML input requires PyYAML. Please install pyyaml or provide JSON.")
+    yaml = importlib.import_module("yaml")
     data = yaml.safe_load(text)
     if not isinstance(data, dict):
         raise SystemExit("Itinerary root must be an object.")
@@ -71,12 +52,7 @@ def normalize_bool(value: Any) -> str:
 
 
 def scrub_text(value: str) -> str:
-    text = str(value or "")
-    for term in SENSITIVE_TERMS:
-        text = re.sub(term, "[敏感信息已移除]", text, flags=re.IGNORECASE)
-    for pattern in ADDRESS_PATTERNS:
-        text = re.sub(pattern, "[敏感定位已移除]", text)
-    return text.strip()
+    return scrub_sensitive_text(value)
 
 
 def is_generic_poi(name: str) -> bool:

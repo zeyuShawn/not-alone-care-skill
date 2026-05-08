@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import csv
@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 from typing import Any, Dict, Iterable, List
 
-from _local_data import ensure_data_dir, now_iso, write_json
+from _local_data import ensure_data_dir, now_iso, truthy, write_json
 
 
 def clean(value: Any) -> str:
@@ -158,6 +158,7 @@ def main() -> int:
     parser.add_argument("--output", default=None, help="Output JSON path. Defaults to stdout only.")
     parser.add_argument("--data-dir", default=None, help="Data root for --save-cache mode.")
     parser.add_argument("--save-cache", action="store_true", help="Save normalized result to job_posts_cache.json.")
+    parser.add_argument("--consent", default="", help="Required as true/yes when --save-cache writes job-search data locally.")
     parser.add_argument("--source", default="browser")
     parser.add_argument("--query", default="")
     args = parser.parse_args()
@@ -183,6 +184,8 @@ def main() -> int:
         out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     if args.save_cache:
+        if not truthy(args.consent):
+            raise SystemExit("Refusing to save job posts cache: --consent must be true when --save-cache is used.")
         root = ensure_data_dir(args.data_dir)
         write_json(root / "job_posts_cache.json", payload)
 

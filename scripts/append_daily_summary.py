@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 
-from _local_data import DAILY_FIELDS, append_row, ensure_data_dir, now_parts, parse_fields, truthy
+from _local_data import DAILY_FIELDS, append_row, ensure_data_dir, now_parts, parse_fields, truthy, validate_daily_row
 
 
 def main() -> int:
@@ -18,6 +18,7 @@ def main() -> int:
 
     date, _ = now_parts()
     row.setdefault("date", date)
+    validate_daily_row(row)
 
     root = ensure_data_dir(args.data_dir)
     append_row(root / "daily_summary.csv", DAILY_FIELDS, row)

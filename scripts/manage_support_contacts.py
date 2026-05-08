@@ -30,7 +30,7 @@ def list_contacts(data_dir: str | None) -> int:
     return 0
 
 
-def show_contact(data_dir: str | None, name: str, include_contact_method: bool) -> int:
+def show_contact(data_dir: str | None, name: str, include_contact_method: bool, confirm_user_consent: str = "") -> int:
     root = ensure_data_dir(data_dir)
     rows = read_rows(root / "support_contacts.csv")
     matches = [
@@ -42,6 +42,8 @@ def show_contact(data_dir: str | None, name: str, include_contact_method: bool) 
         return 0
 
     row = dict(matches[0])
+    if include_contact_method and confirm_user_consent != "YES":
+        raise SystemExit("Refusing to reveal contact_method: pass --confirm-user-consent YES after explicit user consent.")
     if not include_contact_method:
         row.pop("contact_method", None)
     print(json.dumps(row, ensure_ascii=False, indent=2))
@@ -75,6 +77,11 @@ def main() -> int:
         action="store_true",
         help="Reveal contact_method only after the user explicitly agrees.",
     )
+    show.add_argument(
+        "--confirm-user-consent",
+        default="",
+        help="Must be YES when --include-contact-method is used.",
+    )
 
     delete = sub.add_parser("delete")
     delete.add_argument("--name", required=True)
@@ -85,7 +92,7 @@ def main() -> int:
     if args.command == "list":
         return list_contacts(args.data_dir)
     if args.command == "show":
-        return show_contact(args.data_dir, args.name, args.include_contact_method)
+        return show_contact(args.data_dir, args.name, args.include_contact_method, args.confirm_user_consent)
     if args.command == "delete":
         return delete_contact(args.data_dir, args.name)
     return 1

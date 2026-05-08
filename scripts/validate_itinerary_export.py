@@ -1,34 +1,18 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
+import importlib
 import json
-import re
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-SENSITIVE_TERMS = [
-    "自伤",
-    "自杀",
-    "轻生",
-    "suicide",
-    "self-harm",
-    "抑郁",
-    "焦虑",
-]
-
-ADDRESS_PATTERNS = [
-    r"\d{11}",
-    r"\d{6}",
-    r"\d+\.\d{5,}\s*,\s*\d+\.\d{5,}",
-    r"(路|街|道|号)\d+",
-]
+from _privacy_patterns import find_precise_patterns, find_sensitive_text
 
 
 def _load_yaml(path: Path, text: str) -> Dict[str, Any]:
-    try:
-        import yaml  # type: ignore
-    except ImportError as exc:
-        raise SystemExit("YAML input requires PyYAML. Please install pyyaml or provide JSON.") from exc
+    if importlib.util.find_spec("yaml") is None:
+        raise SystemExit("YAML input requires PyYAML. Please install pyyaml or provide JSON.")
+    yaml = importlib.import_module("yaml")
     data = yaml.safe_load(text)
     if not isinstance(data, dict):
         raise SystemExit("Itinerary root must be object.")
@@ -50,23 +34,6 @@ def get_pois(data: Dict[str, Any]) -> List[Dict[str, Any]]:
     if isinstance(raw, list):
         return [item for item in raw if isinstance(item, dict)]
     return []
-
-
-def find_sensitive_text(text: str) -> List[str]:
-    found = []
-    lower = text.lower()
-    for term in SENSITIVE_TERMS:
-        if term.lower() in lower:
-            found.append(term)
-    return sorted(set(found))
-
-
-def find_precise_patterns(text: str) -> List[str]:
-    hits: List[str] = []
-    for pattern in ADDRESS_PATTERNS:
-        if re.search(pattern, text):
-            hits.append(pattern)
-    return hits
 
 
 def check_poi_completeness(pois: List[Dict[str, Any]]) -> List[str]:
