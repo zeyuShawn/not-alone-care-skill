@@ -365,6 +365,5 @@ class ScriptSafetyTests(unittest.TestCase):
             self.assertEqual(copilot_text.count("not-alone-care-skill:start"), 1)
             self.assertEqual(trae_text.count("not-alone-care-skill:start"), 1)
 
-
 if __name__ == "__main__":
     unittest.main()
