@@ -13,6 +13,7 @@ from _local_data import (
     ensure_data_dir,
     now_iso,
     read_json,
+    truthy,
     write_json,
 )
 
@@ -21,6 +22,11 @@ STORE_DEFAULTS = {
     "career": ("career_profile.json", CAREER_PROFILE_DEFAULT),
     "jobs": ("job_posts_cache.json", JOB_POSTS_CACHE_DEFAULT),
 }
+
+
+def require_write_consent(store_key: str, consent: str) -> None:
+    if not truthy(consent):
+        raise SystemExit(f"Refusing to modify {store_key} store: pass --consent true after explicit user consent.")
 
 
 def set_nested(obj: Dict[str, Any], key_path: str, value: Any) -> None:
@@ -81,9 +87,11 @@ def main() -> int:
 
     update = sub.add_parser("update")
     update.add_argument("--set", action="append", default=[], help="dot.path=value, repeatable")
+    update.add_argument("--consent", default="", help="Required as true/yes after explicit user consent for any write.")
 
     delete = sub.add_parser("delete")
     delete.add_argument("--key", action="append", default=[], help="dot.path to delete, repeatable")
+    delete.add_argument("--consent", default="", help="Required as true/yes after explicit user consent for any write.")
 
     reset = sub.add_parser("reset")
     reset.add_argument("--confirm", required=True, help="Must be YES to reset store")
@@ -101,6 +109,7 @@ def main() -> int:
         return 0
 
     if args.command == "update":
+        require_write_consent(args.store, args.consent)
         if not args.set:
             raise SystemExit("No updates provided. Use --set key=value")
         for item in args.set:
@@ -114,6 +123,7 @@ def main() -> int:
         return 0
 
     if args.command == "delete":
+        require_write_consent(args.store, args.consent)
         if not args.key:
             raise SystemExit("No keys provided. Use --key dot.path")
         deleted = 0

@@ -12,9 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 PYTHON = sys.executable
 
 
-def run_script(args: list[str], check: bool = True) -> subprocess.CompletedProcess[str]:
+def run_command(args: list[str], check: bool = True) -> subprocess.CompletedProcess[str]:
     result = subprocess.run(
-        [PYTHON, *args],
+        args,
         cwd=ROOT,
         text=True,
         stdout=subprocess.PIPE,
@@ -24,6 +24,10 @@ def run_script(args: list[str], check: bool = True) -> subprocess.CompletedProce
     if check and result.returncode != 0:
         raise AssertionError(f"command failed: {args}\nstdout={result.stdout}\nstderr={result.stderr}")
     return result
+
+
+def run_script(args: list[str], check: bool = True) -> subprocess.CompletedProcess[str]:
+    return run_command([PYTHON, *args], check=check)
 
 
 class ScriptSafetyTests(unittest.TestCase):
@@ -225,6 +229,141 @@ class ScriptSafetyTests(unittest.TestCase):
             evidence = profile["project_evidence"][0]
             self.assertEqual(evidence["alias"], "demo")
             self.assertNotIn("path", evidence)
+
+    def test_csv_formula_values_are_escaped(self) -> None:
+        with tempfile.TemporaryDirectory() as data_dir:
+            run_script(
+                [
+                    "scripts/append_event_log.py",
+                    "--data-dir",
+                    data_dir,
+                    "--field",
+                    "save_consent=true",
+                    "--field",
+                    "main_trigger==HYPERLINK(\"https://example.invalid\")",
+                ]
+            )
+            with (Path(data_dir) / "event_log.csv").open(encoding="utf-8-sig") as f:
+                rows = list(csv.DictReader(f))
+            self.assertEqual(rows[0]["main_trigger"], "'=HYPERLINK(\"https://example.invalid\")")
+
+    def test_profile_store_writes_require_consent(self) -> None:
+        with tempfile.TemporaryDirectory() as data_dir:
+            refused = run_script(
+                [
+                    "scripts/manage_profile_data.py",
+                    "--data-dir",
+                    data_dir,
+                    "--store",
+                    "career",
+                    "update",
+                    "--set",
+                    "current_role=Developer",
+                ],
+                check=False,
+            )
+            self.assertNotEqual(refused.returncode, 0)
+            self.assertIn("--consent true", refused.stderr)
+
+            ok = run_script(
+                [
+                    "scripts/manage_profile_data.py",
+                    "--data-dir",
+                    data_dir,
+                    "--store",
+                    "career",
+                    "update",
+                    "--set",
+                    "current_role=Developer",
+                    "--consent",
+                    "true",
+                ]
+            )
+            self.assertIn('"status": "ok"', ok.stdout)
+
+    def test_delete_rejects_invalid_date_range(self) -> None:
+        with tempfile.TemporaryDirectory() as data_dir:
+            invalid_date = run_script(
+                [
+                    "scripts/delete_log_entries.py",
+                    "--data-dir",
+                    data_dir,
+                    "--target",
+                    "event",
+                    "--date",
+                    "2026-99-99",
+                    "--dry-run",
+                ],
+                check=False,
+            )
+            self.assertNotEqual(invalid_date.returncode, 0)
+
+            inverted = run_script(
+                [
+                    "scripts/delete_log_entries.py",
+                    "--data-dir",
+                    data_dir,
+                    "--target",
+                    "event",
+                    "--from-date",
+                    "2026-05-10",
+                    "--to-date",
+                    "2026-05-09",
+                    "--dry-run",
+                ],
+                check=False,
+            )
+            self.assertNotEqual(inverted.returncode, 0)
+
+    def test_installer_creates_ide_bridge_files(self) -> None:
+        with tempfile.TemporaryDirectory() as target:
+            run_command(
+                [
+                    "bash",
+                    "scripts/install.sh",
+                    "--source-dir",
+                    str(ROOT),
+                    "--target",
+                    target,
+                    "--skip-codex",
+                    "--ide",
+                    "agents,vscode,cursor,trae",
+                ]
+            )
+            target_path = Path(target)
+            agents = target_path / "AGENTS.md"
+            copilot = target_path / ".github" / "copilot-instructions.md"
+            cursor = target_path / ".cursor" / "rules" / "not-alone-care-skill.mdc"
+            trae = target_path / ".trae" / "rules" / "project_rules.md"
+
+            for path in [agents, copilot, cursor, trae]:
+                self.assertTrue(path.exists(), f"missing {path}")
+                self.assertIn("not-alone-care-skill", path.read_text(encoding="utf-8"))
+
+            self.assertIn("alwaysApply: false", cursor.read_text(encoding="utf-8"))
+
+    def test_installer_is_idempotent_for_append_files(self) -> None:
+        with tempfile.TemporaryDirectory() as target:
+            args = [
+                "bash",
+                "scripts/install.sh",
+                "--source-dir",
+                str(ROOT),
+                "--target",
+                target,
+                "--skip-codex",
+                "--ide",
+                "agents,vscode,trae",
+            ]
+            run_command(args)
+            run_command(args)
+
+            agents_text = (Path(target) / "AGENTS.md").read_text(encoding="utf-8")
+            copilot_text = (Path(target) / ".github" / "copilot-instructions.md").read_text(encoding="utf-8")
+            trae_text = (Path(target) / ".trae" / "rules" / "project_rules.md").read_text(encoding="utf-8")
+            self.assertEqual(agents_text.count("not-alone-care-skill:start"), 1)
+            self.assertEqual(copilot_text.count("not-alone-care-skill:start"), 1)
+            self.assertEqual(trae_text.count("not-alone-care-skill:start"), 1)
 
 
 if __name__ == "__main__":

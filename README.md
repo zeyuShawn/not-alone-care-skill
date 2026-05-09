@@ -1,5 +1,7 @@
 <div align="center">
 
+<p><strong>English</strong> | <a href="README.zh-CN.md">简体中文</a></p>
+
 # You Are Not Alone
 
 <p>
@@ -16,6 +18,8 @@
 
 <p>
   <a href="#quick-start">Quick Start</a> |
+  <a href="#visual-demo">Visual Demo</a> |
+  <a href="#quick-start">Install</a> |
   <a href="#what-it-does">What It Does</a> |
   <a href="#whats-new-in-ver2">What's New in ver2</a> |
   <a href="#demos">Demos</a> |
@@ -40,6 +44,32 @@ The workflow keeps one practical rule: a distressed user should not have to choo
 > This project is not a diagnosis tool, not a therapist, and not a replacement for emergency or professional care. If you or someone else may be in immediate danger, contact local emergency services, a crisis line, or a trusted person nearby.
 
 ---
+
+## Visual Demo
+
+Use the skill from VS Code/Codex by asking for `$not-alone-care-skill`; the assistant loads the safety-first workflow, keeps the first response small, and only writes local records after explicit consent.
+
+![VS Code demo showing the skill prompt, references, scripts, and assistant preview](docs/assets/vscode-demo.svg)
+
+The two diagrams below show the project at a glance: the architecture map explains how references, scripts, and isolated local stores fit together; the safety-routing chart shows why crisis and urgent-care logic always runs before optional outing or career modules.
+
+<p align="center">
+  <img src="docs/assets/architecture-map.svg" alt="Architecture map for safety routing, references, scripts, and isolated data stores" width="49%">
+  <img src="docs/assets/safety-routing.svg" alt="Safety routing flowchart from user message to crisis, urgent, care, or self-help support" width="49%">
+</p>
+
+---
+
+## Confidence, Audit, and Hardening
+
+No mental-health support tool should claim literal 100% certainty. This repository is designed to make confidence factual instead of absolute: safety boundaries are explicit, local writes are consent-gated, tests cover key privacy behaviors, and the scripts can be re-validated after changes.
+
+Recent hardening focus areas:
+
+- CSV log values are escaped before writing so spreadsheet apps do not execute user-provided formulas when logs are opened manually.
+- Profile-store updates and deletions require explicit write consent through `scripts/manage_profile_data.py`.
+- Date-scoped deletions reject malformed or inverted date ranges before touching local files.
+- The recommended confidence loop is: inspect changes, run the test suite, compile scripts, validate any local data directory, then repeat after every functional change.
 
 ## What It Does
 
@@ -80,6 +110,18 @@ Use the web fallback:
 
 ```text
 Please follow the uploaded You Are Not Alone Web Prompt. Start with a low-burden check-in and do not ask me to choose a module.
+```
+
+Install for Codex plus mainstream AI IDE bridge files (VS Code/Copilot, Cursor, Trae/Tare, and AGENTS.md):
+
+```bash
+bash scripts/install.sh --ide all --target "$PWD"
+```
+
+One-command download + install from a Git URL (replace the URL with your fork or published repository):
+
+```bash
+NAC_REPO_URL="https://github.com/<owner>/not-alone-care-skill.git" bash -c 'tmp="$(mktemp -d)"; git clone --depth 1 "$NAC_REPO_URL" "$tmp"; bash "$tmp/scripts/install.sh" --ide all --target "$PWD"; rm -rf "$tmp"'
 ```
 
 Initialize local data:
@@ -227,9 +269,10 @@ Privacy defaults:
 - Save minimal structured summaries, not raw conversation text by default.
 - Ask for consent before saving each record type unless ongoing consent is explicitly configured.
 - Validate local mood/function scores, dates, and known fields before writing records.
+- Escape CSV cells that could be interpreted as formulas when opened in spreadsheet software.
 - Let users inspect, summarize, update, validate, dry-run deletion, or delete records.
 - Keep mental-health records isolated from external websites and job platforms unless the user explicitly consents.
-- Require explicit consent before saving browser-collected job posts or normalized job caches.
+- Require explicit consent before saving browser-collected job posts, normalized job caches, or profile-store updates/deletions.
 - Do not store absolute local code paths in career profiles unless `--include-path` is explicitly used.
 
 ---
@@ -256,6 +299,11 @@ This project deliberately avoids clinical overreach.
 ```text
 not-alone-care-skill/
 ├── SKILL.md
+├── docs/
+│   └── assets/
+│       ├── vscode-demo.svg
+│       ├── architecture-map.svg
+│       └── safety-routing.svg
 ├── agents/
 │   └── openai.yaml
 ├── references/
@@ -278,6 +326,7 @@ not-alone-care-skill/
 │   ├── local-code-career-profile.md
 │   └── external-data-privacy.md
 ├── scripts/
+│   ├── install.sh
 │   ├── _local_data.py
 │   ├── _privacy_patterns.py
 │   ├── init_local_data.py

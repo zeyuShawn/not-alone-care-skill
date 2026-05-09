@@ -214,6 +214,14 @@ def validate_time(value: str, field_name: str = "time") -> None:
         raise ValueError(f"{field_name} must use HH:MM:SS format") from exc
 
 
+def escape_csv_cell(value: object) -> str:
+    """Prevent spreadsheet formula execution when local CSV logs are opened manually."""
+    text = str(value or "")
+    if text and text[0] in {"=", "+", "-", "@", "\t", "\r"}:
+        return "'" + text
+    return text
+
+
 def validate_range(row: Dict[str, object], field_names: Iterable[str], low: float, high: float) -> None:
     for field in field_names:
         raw = row.get(field, "")
@@ -261,7 +269,7 @@ def atomic_write_text(path: Path, text: str, encoding: str = "utf-8") -> None:
 
 def append_row(path: Path, fields: List[str], row: Dict[str, object]) -> None:
     validate_no_unknown_fields(fields, row)
-    clean = {field: str(row.get(field, "") or "") for field in fields}
+    clean = {field: escape_csv_cell(row.get(field, "")) for field in fields}
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", newline="", encoding=ENCODING) as f:
         writer = csv.DictWriter(f, fieldnames=fields)
@@ -281,7 +289,7 @@ def write_rows(path: Path, fields: List[str], rows: List[Dict[str, str]]) -> Non
         writer = csv.DictWriter(tmp, fieldnames=fields)
         writer.writeheader()
         for row in rows:
-            writer.writerow({field: row.get(field, "") for field in fields})
+            writer.writerow({field: escape_csv_cell(row.get(field, "")) for field in fields})
         tmp_path = Path(tmp.name)
     os.replace(tmp_path, path)
 
