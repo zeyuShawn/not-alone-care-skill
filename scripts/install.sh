@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SKILL_NAME="not-alone-care-skill"
+SKILL_NAME="mental-care-skill"
 INSTALL_CODEX=1
 IDE_LIST="all"
 TARGET_DIR="$(pwd)"
-SOURCE_DIR="${NAC_INSTALL_SOURCE_DIR:-}"
+SOURCE_DIR="${MENTAL_CARE_INSTALL_SOURCE_DIR:-}"
 
 usage() {
   cat <<'USAGE'
-Install not-alone-care-skill for Codex and AI IDE instruction files.
+Install mental-care-skill for Codex and AI IDE instruction files.
 
 Usage:
   bash scripts/install.sh [--target DIR] [--ide all|agents,vscode,cursor,trae,tare] [--skip-codex] [--source-dir DIR]
@@ -19,7 +19,7 @@ Examples:
   bash scripts/install.sh --ide vscode,cursor --skip-codex --target /path/to/project
 
 Environment:
-  NAC_INSTALL_SOURCE_DIR  Source checkout containing SKILL.md, references/, scripts/.
+  MENTAL_CARE_INSTALL_SOURCE_DIR  Source checkout containing SKILL.md, references/, scripts/.
   CODEX_HOME              Codex config root; defaults to ~/.codex.
 USAGE
 }
@@ -90,9 +90,9 @@ copy_tree() {
 
 instruction_body() {
   cat <<'BODY'
-# You Are Not Alone / not-alone-care-skill
+# You Are Not Alone / mental-care-skill
 
-Activate these instructions only when the user explicitly asks to use `not-alone-care-skill`, asks for safety-first mental-health support, or requests the included low-burden outing / career-clarification workflows. Do not change unrelated coding behavior.
+Activate these instructions only when the user explicitly asks to use `mental-care-skill`, asks for safety-first mental-health support, or requests the included low-burden outing / career-clarification workflows. Do not change unrelated coding behavior.
 
 Core rules:
 - This is not diagnosis, therapy, emergency care, or medication advice.
@@ -103,7 +103,7 @@ Core rules:
 - Keep mental-health logs isolated from outing, career, job, and external-site data.
 - Optional outing/career modules may run only after safety routing says they are appropriate.
 
-If Codex skills are available, load `$not-alone-care-skill`. Otherwise, read the local checkout's `SKILL.md` and relevant `references/*.md` files before answering.
+If Codex skills are available, load `$mental-care-skill`. Otherwise, read the local checkout's `SKILL.md` and relevant `references/*.md` files before answering.
 BODY
 }
 
@@ -124,8 +124,8 @@ write_if_changed() {
 
 append_block() {
   local path="$1"
-  local start="<!-- not-alone-care-skill:start -->"
-  local end="<!-- not-alone-care-skill:end -->"
+  local start="<!-- mental-care-skill:start -->"
+  local end="<!-- mental-care-skill:end -->"
   local tmp block
   tmp="$(mktemp)"
   block="$(mktemp)"
@@ -175,13 +175,13 @@ if contains_ide cursor; then
   {
     cat <<'MDC'
 ---
-description: Safety-first mental-health support via not-alone-care-skill
+description: Safety-first mental-health support via mental-care-skill
 alwaysApply: false
 ---
 
 MDC
     instruction_body
-  } | write_if_changed "$TARGET_DIR/.cursor/rules/not-alone-care-skill.mdc"
+  } | write_if_changed "$TARGET_DIR/.cursor/rules/mental-care-skill.mdc"
 fi
 
 if contains_ide trae || contains_ide tare; then
@@ -197,5 +197,5 @@ Done.
 - IDE bridge files: $IDE_LIST
 
 Open VS Code, Cursor, or Trae in the target project and ask:
-  Use \$not-alone-care-skill to provide safety-first support.
+  Use \$mental-care-skill to provide safety-first support.
 DONE

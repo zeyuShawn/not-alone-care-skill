@@ -5,7 +5,7 @@
 # You Are Not Alone
 
 <p>
-  <strong>安全优先、低负担的心理健康支持 Skill：包含危机导航、温和出门恢复、职业方向梳理与本地隐私记录。</strong>
+  <strong>难熬的时候，先帮你稳住一下：确认安全、给一个做得到的小步骤，也能帮你准备求助、安排轻松出门、理清职业方向，并把记录留在本地。</strong>
 </p>
 
 <p>
@@ -16,10 +16,10 @@
 </p>
 
 <p>
-  <a href="#快速开始">快速开始</a> |
   <a href="#可视化演示">可视化演示</a> |
-  <a href="#它能做什么">它能做什么</a> |
   <a href="#一键安装到-vscode--cursor--trae">一键安装</a> |
+  <a href="#快速开始">快速开始</a> |
+  <a href="#它能做什么">它能做什么</a> |
   <a href="#本地数据与隐私">本地数据与隐私</a> |
   <a href="#安全边界">安全边界</a>
 </p>
@@ -28,9 +28,9 @@
 
 ---
 
-`not-alone-care-skill` 是一个心理健康支持 Skill，不是诊断工具，不是治疗工具，也不能替代急救、危机热线、医生、心理咨询师或身边可信任的人。
+`mental-care-skill` 是一个心理健康支持 Skill，不是诊断工具，不是治疗工具，也不能替代急救、危机热线、医生、心理咨询师或身边可信任的人。
 
-核心原则：人在痛苦、焦虑、低落或慌乱时，不应该再被要求选择复杂模式。助手会先静默做安全路由，给出一个默认的低负担步骤，然后在安全时才引入自助练习、就医准备、支持联系人、温和出门或职业方向模块。
+核心原则：人在痛苦、焦虑、低落或慌乱时，不应该再被要求选择复杂模式。助手会先静默做安全路由，给出一个默认的低负担步骤，然后在安全时才引入自助练习、就医准备、支持联系人、轻松出门或职业方向模块。
 
 > [!IMPORTANT]
 > 如果你或他人可能处于即时危险中，请联系当地急救服务、危机热线或身边可信任的人。本项目只提供辅助性支持与准备工作。
@@ -39,7 +39,7 @@
 
 ## 可视化演示
 
-在 VS Code / Cursor / Trae / Codex 中使用时，可以直接要求：`Use $not-alone-care-skill`。助手会先走安全路由，保持第一步足够小，并且只有在明确同意后才写入本地记录。
+在 VS Code / Cursor / Trae / Codex 中使用时，可以直接要求：`Use $mental-care-skill`。助手会先走安全路由，保持第一步足够小，并且只有在明确同意后才写入本地记录。
 
 ![VS Code demo showing the skill prompt, references, scripts, and assistant preview](docs/assets/vscode-demo.svg)
 
@@ -52,12 +52,47 @@
 
 ---
 
+## 一键安装到 VSCode / Cursor / Trae
+
+### 本地仓库内一键安装
+
+在当前项目目录运行：
+
+```bash
+bash scripts/install.sh --ide all --target "$PWD"
+```
+
+它会：
+
+- 将 Skill 安装到 `~/.codex/skills/mental-care-skill`，供 Codex 使用。
+- 为 VS Code / GitHub Copilot 写入 `.github/copilot-instructions.md`。
+- 为 Cursor 写入 `.cursor/rules/mental-care-skill.mdc`。
+- 为 Trae / Tare 写入 `.trae/rules/project_rules.md`。
+- 写入/更新通用 `AGENTS.md`，方便支持 AGENTS.md 的工具读取。
+
+### 从 Git 地址下载并安装
+
+把下面命令里的 URL 换成你的 GitHub 仓库或 fork 地址：
+
+```bash
+MENTAL_CARE_REPO_URL="https://github.com/<owner>/mental-care-skill.git" bash -c 'tmp="$(mktemp -d)"; git clone --depth 1 "$MENTAL_CARE_REPO_URL" "$tmp"; bash "$tmp/scripts/install.sh" --ide all --target "$PWD"; rm -rf "$tmp"'
+```
+
+只安装某些 IDE：
+
+```bash
+bash scripts/install.sh --ide vscode,cursor --target "$PWD"
+bash scripts/install.sh --ide trae --skip-codex --target "$PWD"
+```
+
+---
+
 ## 快速开始
 
 直接使用 Skill：
 
 ```text
-Use $not-alone-care-skill to provide safety-first mental-health support, then optionally guide low-burden outing or career clarification when appropriate, and save only consented local records.
+Use $mental-care-skill to provide safety-first mental-health support, then optionally guide low-burden outing or career clarification when appropriate, and save only consented local records.
 ```
 
 如果本地 Skill 不可用，可以使用网页版备用 Prompt：
@@ -88,41 +123,6 @@ python scripts/summarize_trends.py
 
 ```bash
 python scripts/validate_local_data.py
-```
-
----
-
-## 一键安装到 VSCode / Cursor / Trae
-
-### 本地仓库内一键安装
-
-在当前项目目录运行：
-
-```bash
-bash scripts/install.sh --ide all --target "$PWD"
-```
-
-它会：
-
-- 将 Skill 安装到 `~/.codex/skills/not-alone-care-skill`，供 Codex 使用。
-- 为 VS Code / GitHub Copilot 写入 `.github/copilot-instructions.md`。
-- 为 Cursor 写入 `.cursor/rules/not-alone-care-skill.mdc`。
-- 为 Trae / Tare 写入 `.trae/rules/project_rules.md`。
-- 写入/更新通用 `AGENTS.md`，方便支持 AGENTS.md 的工具读取。
-
-### 从 Git 地址下载并安装
-
-把下面命令里的 URL 换成你的 GitHub 仓库或 fork 地址：
-
-```bash
-NAC_REPO_URL="https://github.com/<owner>/not-alone-care-skill.git" bash -c 'tmp="$(mktemp -d)"; git clone --depth 1 "$NAC_REPO_URL" "$tmp"; bash "$tmp/scripts/install.sh" --ide all --target "$PWD"; rm -rf "$tmp"'
-```
-
-只安装某些 IDE：
-
-```bash
-bash scripts/install.sh --ide vscode,cursor --target "$PWD"
-bash scripts/install.sh --ide trae --skip-codex --target "$PWD"
 ```
 
 ---
@@ -170,7 +170,7 @@ bash scripts/install.sh --ide trae --skip-codex --target "$PWD"
 默认路径：
 
 ```text
-~/not_alone_care_data/
+~/mental_care_data/
 ```
 
 | 数据域 | 文件 |
@@ -207,7 +207,7 @@ bash scripts/install.sh --ide trae --skip-codex --target "$PWD"
 ## 仓库结构
 
 ```text
-not-alone-care-skill/
+mental-care-skill/
 ├── README.md
 ├── README.zh-CN.md
 ├── SKILL.md

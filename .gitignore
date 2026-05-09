@@ -10,7 +10,7 @@ tmp/
 temp/
 
 # Local mental-health records: never publish these
-not_alone_care_data/
+mental_care_data/
 cure_yourself_data/
 event_log.csv
 daily_summary.csv

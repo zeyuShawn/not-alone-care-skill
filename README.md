@@ -5,7 +5,7 @@
 # You Are Not Alone
 
 <p>
-  <strong>Safety-first mental-health support with low-burden routing, crisis navigation, optional outing recovery, and career-direction clarification.</strong>
+  <strong>A steadier way for AI assistants to help on hard days: check safety first, offer one doable next step, and support crisis planning, simple outside plans, career clarity, and private local notes.</strong>
 </p>
 
 <p>
@@ -17,9 +17,9 @@
 </p>
 
 <p>
-  <a href="#quick-start">Quick Start</a> |
   <a href="#visual-demo">Visual Demo</a> |
-  <a href="#quick-start">Install</a> |
+  <a href="#install">Install</a> |
+  <a href="#quick-start">Quick Start</a> |
   <a href="#what-it-does">What It Does</a> |
   <a href="#whats-new-in-ver210">What's New in ver2.1.0</a> |
   <a href="#demos">Demos</a> |
@@ -32,7 +32,7 @@
 
 ---
 
-`not-alone-care-skill` is a mental-health support skill, not a diagnosis or treatment tool.
+`mental-care-skill` is a mental-health support skill, not a diagnosis or treatment tool.
 
 Core principle: the user should not carry extra cognitive load when distressed. The assistant routes risk first, gives a default low-burden step, and only then introduces optional modules when safe.
 
@@ -47,7 +47,7 @@ The workflow keeps one practical rule: a distressed user should not have to choo
 
 ## Visual Demo
 
-Use the skill from VS Code/Codex by asking for `$not-alone-care-skill`; the assistant loads the safety-first workflow, keeps the first response small, and only writes local records after explicit consent.
+Use the skill from VS Code/Codex by asking for `$mental-care-skill`; the assistant loads the safety-first workflow, keeps the first response small, and only writes local records after explicit consent.
 
 ![VS Code demo showing the skill prompt, references, scripts, and assistant preview](docs/assets/vscode-demo.svg)
 
@@ -59,6 +59,23 @@ The two diagrams below show the project at a glance: the architecture map explai
 </p>
 
 ---
+
+## Install
+
+Install for Codex plus mainstream AI IDE bridge files (VS Code/Copilot, Cursor, Trae/Tare, and AGENTS.md):
+
+```bash
+bash scripts/install.sh --ide all --target "$PWD"
+```
+
+One-command download + install from a Git URL (replace the URL with your fork or published repository):
+
+```bash
+MENTAL_CARE_REPO_URL="https://github.com/<owner>/mental-care-skill.git" bash -c 'tmp="$(mktemp -d)"; git clone --depth 1 "$MENTAL_CARE_REPO_URL" "$tmp"; bash "$tmp/scripts/install.sh" --ide all --target "$PWD"; rm -rf "$tmp"'
+```
+
+---
+
 
 ## Confidence, Audit, and Hardening
 
@@ -103,25 +120,13 @@ Recent hardening focus areas:
 Use the skill directly:
 
 ```text
-Use $not-alone-care-skill to provide safety-first mental-health support, then optionally guide low-burden outing or career clarification when appropriate, and save only consented local records.
+Use $mental-care-skill to provide safety-first mental-health support, then optionally guide low-burden outing or career clarification when appropriate, and save only consented local records.
 ```
 
 Use the web fallback:
 
 ```text
 Please follow the uploaded You Are Not Alone Web Prompt. Start with a low-burden check-in and do not ask me to choose a module.
-```
-
-Install for Codex plus mainstream AI IDE bridge files (VS Code/Copilot, Cursor, Trae/Tare, and AGENTS.md):
-
-```bash
-bash scripts/install.sh --ide all --target "$PWD"
-```
-
-One-command download + install from a Git URL (replace the URL with your fork or published repository):
-
-```bash
-NAC_REPO_URL="https://github.com/<owner>/not-alone-care-skill.git" bash -c 'tmp="$(mktemp -d)"; git clone --depth 1 "$NAC_REPO_URL" "$tmp"; bash "$tmp/scripts/install.sh" --ide all --target "$PWD"; rm -rf "$tmp"'
 ```
 
 Initialize local data:
@@ -234,7 +239,7 @@ You only need to choose one first step: "scan projects" or "check market".
 python scripts/export_roundtrip_itinerary.py --itinerary itinerary.json
 
 # 2) Validate export quality and sensitive-content rules
-python scripts/validate_itinerary_export.py --itinerary itinerary.json --export-dir ~/not_alone_care_data/exports/roundtrip/2026-04-25-example
+python scripts/validate_itinerary_export.py --itinerary itinerary.json --export-dir ~/mental_care_data/exports/roundtrip/2026-04-25-example
 ```
 
 ---
@@ -243,7 +248,7 @@ python scripts/validate_itinerary_export.py --itinerary itinerary.json --export-
 
 If local scripting is unavailable, use the standalone web prompt:
 
-- Prompt file: [网页版/not-alone-care-web-prompt.md](网页版/not-alone-care-web-prompt.md)
+- Prompt file: [网页版/mental-care-web-prompt.md](网页版/mental-care-web-prompt.md)
 
 The web prompt is designed for browser-based LLM usage and avoids pretending it can write local files.
 
@@ -254,7 +259,7 @@ The web prompt is designed for browser-based LLM usage and avoids pretending it 
 Default local path:
 
 ```text
-~/not_alone_care_data/
+~/mental_care_data/
 ```
 
 Data domains:
@@ -297,7 +302,7 @@ This project deliberately avoids clinical overreach.
 <summary><strong>View Repository Tree</strong></summary>
 
 ```text
-not-alone-care-skill/
+mental-care-skill/
 ├── SKILL.md
 ├── docs/
 │   └── assets/
@@ -347,7 +352,7 @@ not-alone-care-skill/
 ├── tests/
 │   └── test_scripts.py
 └── 网页版/
-    └── not-alone-care-web-prompt.md
+    └── mental-care-web-prompt.md
 ```
 
 </details>

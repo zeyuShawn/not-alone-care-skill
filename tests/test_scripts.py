@@ -333,12 +333,12 @@ class ScriptSafetyTests(unittest.TestCase):
             target_path = Path(target)
             agents = target_path / "AGENTS.md"
             copilot = target_path / ".github" / "copilot-instructions.md"
-            cursor = target_path / ".cursor" / "rules" / "not-alone-care-skill.mdc"
+            cursor = target_path / ".cursor" / "rules" / "mental-care-skill.mdc"
             trae = target_path / ".trae" / "rules" / "project_rules.md"
 
             for path in [agents, copilot, cursor, trae]:
                 self.assertTrue(path.exists(), f"missing {path}")
-                self.assertIn("not-alone-care-skill", path.read_text(encoding="utf-8"))
+                self.assertIn("mental-care-skill", path.read_text(encoding="utf-8"))
 
             self.assertIn("alwaysApply: false", cursor.read_text(encoding="utf-8"))
 
@@ -361,9 +361,10 @@ class ScriptSafetyTests(unittest.TestCase):
             agents_text = (Path(target) / "AGENTS.md").read_text(encoding="utf-8")
             copilot_text = (Path(target) / ".github" / "copilot-instructions.md").read_text(encoding="utf-8")
             trae_text = (Path(target) / ".trae" / "rules" / "project_rules.md").read_text(encoding="utf-8")
-            self.assertEqual(agents_text.count("not-alone-care-skill:start"), 1)
-            self.assertEqual(copilot_text.count("not-alone-care-skill:start"), 1)
-            self.assertEqual(trae_text.count("not-alone-care-skill:start"), 1)
+            self.assertEqual(agents_text.count("mental-care-skill:start"), 1)
+            self.assertEqual(copilot_text.count("mental-care-skill:start"), 1)
+            self.assertEqual(trae_text.count("mental-care-skill:start"), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

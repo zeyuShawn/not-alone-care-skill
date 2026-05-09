@@ -117,7 +117,7 @@ RISK_LEVELS = {"", "green", "yellow", "orange", "red", "绿", "黄", "橙", "红
 
 
 def default_data_dir() -> Path:
-    return Path.home() / "not_alone_care_data"
+    return Path.home() / "mental_care_data"
 
 
 def resolve_data_dir(data_dir: str | None) -> Path:

@@ -5,7 +5,7 @@ Use local memory for continuity and trend support, not raw therapy transcript st
 ## Data Root
 
 ```text
-~/not_alone_care_data/
+~/mental_care_data/
 ```
 
 ## Record Domains

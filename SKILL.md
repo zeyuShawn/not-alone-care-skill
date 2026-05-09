@@ -1,5 +1,5 @@
 ﻿---
-name: not-alone-care-skill
+name: mental-care-skill
 description: Use when a user reports depression, anxiety, panic, emotional distress, loss of function, loneliness, hopelessness, self-harm thoughts, suicidal ideation, medication concerns, need for mental-health self-help, care preparation, crisis navigation, evening check-ins, local mood logs, support contacts, recovery trend summaries, low-burden outing needs, short trips, city walks, cross-city or overnight route planning, career direction confusion, browser-based job-post collection, local code career profiling, job-fit analysis, or consent-based career profile support. This skill provides low-burden mental-health support with safety-first routing. It must not diagnose, must not replace professional care, must prioritize crisis safety, must not share mental-health records with external services without consent, and must not auto-apply jobs, auto-contact recruiters, or send personal information without explicit confirmation.
 ---
 
@@ -93,7 +93,7 @@ Before any external-site operations or personal-data use, load `references/exter
 
 Load `references/long-term-memory.md` and `references/privacy-and-consent.md` before write/delete actions.
 
-Default data root: `~/not_alone_care_data`.
+Default data root: `~/mental_care_data`.
 
 Mental-health records remain in CSV logs. New modules use separate JSON files:
 

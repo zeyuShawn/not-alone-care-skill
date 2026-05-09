@@ -292,7 +292,7 @@ def write_outputs(target_dir: Path, itinerary: Dict[str, Any]) -> Dict[str, str]
 def main() -> int:
     parser = argparse.ArgumentParser(description="Export itinerary to roundtrip-friendly text/HTML assets.")
     parser.add_argument("--itinerary", required=True, help="Path to itinerary JSON/YAML.")
-    parser.add_argument("--data-dir", default=None, help="Data root, defaults to ~/not_alone_care_data.")
+    parser.add_argument("--data-dir", default=None, help="Data root, defaults to ~/mental_care_data.")
     parser.add_argument("--output-dir", default=None, help="Optional explicit output directory.")
     parser.add_argument("--strict", action="store_true", help="Fail if POI names are too generic.")
     args = parser.parse_args()

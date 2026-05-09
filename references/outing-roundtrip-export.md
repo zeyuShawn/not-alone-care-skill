@@ -54,7 +54,7 @@ Required route-level sections:
   - `itinerary.md`
   - `itinerary.html`
 - Save path:
-  - `~/not_alone_care_data/exports/roundtrip/YYYY-MM-DD-路线名/`
+  - `~/mental_care_data/exports/roundtrip/YYYY-MM-DD-路线名/`
 - Must run sensitive-text scrubbing.
 - Must reject overly generic POI names when strict mode is on.
 
