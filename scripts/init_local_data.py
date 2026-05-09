@@ -7,11 +7,11 @@ from _local_data import ensure_data_dir
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Initialize local not-alone-care data files.")
+    parser = argparse.ArgumentParser(description="Initialize local mental-care data files.")
     parser.add_argument(
         "--data-dir",
         default=None,
-        help="Target data directory. Defaults to ~/not_alone_care_data.",
+        help="Target data directory. Defaults to ~/mental_care_data.",
     )
     args = parser.parse_args()
 

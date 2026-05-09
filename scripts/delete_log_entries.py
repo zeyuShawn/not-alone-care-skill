@@ -55,6 +55,14 @@ def main() -> int:
 
     if args.date and (args.from_date or args.to_date):
         raise SystemExit("Use either --date or --from-date/--to-date, not both.")
+    if args.date:
+        parse_date(args.date, "--date")
+    if args.from_date:
+        parse_date(args.from_date, "--from-date")
+    if args.to_date:
+        parse_date(args.to_date, "--to-date")
+    if args.from_date and args.to_date and parse_date(args.from_date, "--from-date") > parse_date(args.to_date, "--to-date"):
+        raise SystemExit("--from-date must be on or before --to-date.")
 
     root = ensure_data_dir(args.data_dir)
     filename, fields = TARGETS[args.target]

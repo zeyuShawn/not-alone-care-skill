@@ -28,7 +28,7 @@ Goal: answer "what capability is already evidenced" without exaggeration.
 
 ## Career Profile Schema
 
-Target file: `~/not_alone_care_data/career_profile.json`
+Target file: `~/mental_care_data/career_profile.json`
 
 ```json
 {

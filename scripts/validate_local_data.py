@@ -41,7 +41,7 @@ def header_issues(name: str, rows: List[Dict[str, str]], expected_fields: List[s
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate local not-alone-care data files without diagnosis.")
+    parser = argparse.ArgumentParser(description="Validate local mental-care data files without diagnosis.")
     parser.add_argument("--data-dir", default=None)
     args = parser.parse_args()
 

@@ -5,7 +5,7 @@ Use local memory for continuity and trend support, not raw therapy transcript st
 ## Data Root
 
 ```text
-~/not_alone_care_data/
+~/mental_care_data/
 ```
 
 ## Record Domains
@@ -16,7 +16,7 @@ Mental-health CSV:
 - `daily_summary.csv`
 - `support_contacts.csv`
 
-ver2 JSON (separate from mental-health logs):
+ver2.1.0 JSON (separate from mental-health logs):
 
 - `outing_preferences.json`
 - `career_profile.json`
@@ -43,7 +43,7 @@ date,mood_avg,anxiety_avg,energy_avg,sleep_hours,function_score,main_patterns,wa
 
 ## JSON Management Rule
 
-All ver2 JSON stores must support:
+All ver2.1.0 JSON stores must support:
 
 - view,
 - update,
