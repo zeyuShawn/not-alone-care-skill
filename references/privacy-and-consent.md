@@ -13,7 +13,7 @@ Mental-health records are sensitive even in local storage.
 
 ## Storage Isolation Rule
 
-Mental-health CSV and ver2 non-clinical JSON must stay separated.
+Mental-health CSV and ver2.1.0 non-clinical JSON must stay separated.
 
 Mental-health CSV:
 
@@ -21,7 +21,7 @@ Mental-health CSV:
 - `daily_summary.csv`
 - `support_contacts.csv`
 
-ver2 JSON:
+ver2.1.0 JSON:
 
 - `outing_preferences.json`
 - `career_profile.json`
