@@ -226,6 +226,91 @@ class ScriptSafetyTests(unittest.TestCase):
             self.assertEqual(evidence["alias"], "demo")
             self.assertNotIn("path", evidence)
 
+    def test_csv_formula_values_are_escaped(self) -> None:
+        with tempfile.TemporaryDirectory() as data_dir:
+            run_script(
+                [
+                    "scripts/append_event_log.py",
+                    "--data-dir",
+                    data_dir,
+                    "--field",
+                    "save_consent=true",
+                    "--field",
+                    "main_trigger==HYPERLINK(\"https://example.invalid\")",
+                ]
+            )
+            with (Path(data_dir) / "event_log.csv").open(encoding="utf-8-sig") as f:
+                rows = list(csv.DictReader(f))
+            self.assertEqual(rows[0]["main_trigger"], "'=HYPERLINK(\"https://example.invalid\")")
+
+    def test_profile_store_writes_require_consent(self) -> None:
+        with tempfile.TemporaryDirectory() as data_dir:
+            refused = run_script(
+                [
+                    "scripts/manage_profile_data.py",
+                    "--data-dir",
+                    data_dir,
+                    "--store",
+                    "career",
+                    "update",
+                    "--set",
+                    "current_role=Developer",
+                ],
+                check=False,
+            )
+            self.assertNotEqual(refused.returncode, 0)
+            self.assertIn("--consent true", refused.stderr)
+
+            ok = run_script(
+                [
+                    "scripts/manage_profile_data.py",
+                    "--data-dir",
+                    data_dir,
+                    "--store",
+                    "career",
+                    "update",
+                    "--set",
+                    "current_role=Developer",
+                    "--consent",
+                    "true",
+                ]
+            )
+            self.assertIn('"status": "ok"', ok.stdout)
+
+    def test_delete_rejects_invalid_date_range(self) -> None:
+        with tempfile.TemporaryDirectory() as data_dir:
+            invalid_date = run_script(
+                [
+                    "scripts/delete_log_entries.py",
+                    "--data-dir",
+                    data_dir,
+                    "--target",
+                    "event",
+                    "--date",
+                    "2026-99-99",
+                    "--dry-run",
+                ],
+                check=False,
+            )
+            self.assertNotEqual(invalid_date.returncode, 0)
+
+            inverted = run_script(
+                [
+                    "scripts/delete_log_entries.py",
+                    "--data-dir",
+                    data_dir,
+                    "--target",
+                    "event",
+                    "--from-date",
+                    "2026-05-10",
+                    "--to-date",
+                    "2026-05-09",
+                    "--dry-run",
+                ],
+                check=False,
+            )
+            self.assertNotEqual(inverted.returncode, 0)
+
 
 if __name__ == "__main__":
     unittest.main()
