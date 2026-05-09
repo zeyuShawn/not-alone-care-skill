@@ -11,7 +11,7 @@
 <p>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
   <img alt="Safety first" src="https://img.shields.io/badge/safety--first-crisis--aware-blue.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-ver2-black.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-ver2.1.0-black.svg">
   <img alt="Local first" src="https://img.shields.io/badge/local--first-privacy--minded-5f4bb6.svg">
 </p>
 
@@ -176,7 +176,7 @@ bash scripts/install.sh --ide trae --skip-codex --target "$PWD"
 | 数据域 | 文件 |
 |---|---|
 | 心理健康日志 | `event_log.csv`, `daily_summary.csv`, `support_contacts.csv` |
-| ver2 出门/职业/职位数据 | `outing_preferences.json`, `career_profile.json`, `job_posts_cache.json`, `exports/roundtrip/` |
+| ver2.1.0 出门/职业/职位数据 | `outing_preferences.json`, `career_profile.json`, `job_posts_cache.json`, `exports/roundtrip/` |
 
 隐私默认值：
 

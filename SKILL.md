@@ -7,7 +7,7 @@ description: Use when a user reports depression, anxiety, panic, emotional distr
 
 Provide a stable, low-burden mental-health companion workflow. Keep the core mission unchanged: safety-first emotional support, crisis-aware routing, consent-based local records, and real-world care navigation.
 
-The ver2 extension adds two optional recovery modules under the same safety framework:
+The ver2.1.0 extension adds two optional recovery modules under the same safety framework:
 
 - `Gentle Outing Planner` for low-burden environment shifts.
 - `Career Compass` for career-direction clarification and job-fit exploration.

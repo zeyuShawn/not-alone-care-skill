@@ -77,7 +77,7 @@ def resolve_store(root: Path, store_key: str) -> tuple[Path, Dict[str, Any]]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="View/update/delete ver2 JSON stores.")
+    parser = argparse.ArgumentParser(description="View/update/delete ver2.1.0 JSON stores.")
     parser.add_argument("--data-dir", default=None)
     parser.add_argument("--store", choices=STORE_DEFAULTS.keys(), required=True)
 

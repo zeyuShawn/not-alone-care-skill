@@ -11,7 +11,7 @@
 <p>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
   <img alt="Safety first" src="https://img.shields.io/badge/safety--first-crisis--aware-blue.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-ver2-black.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-ver2.1.0-black.svg">
   <img alt="Local first" src="https://img.shields.io/badge/local--first-privacy--minded-5f4bb6.svg">
   <img alt="Modules" src="https://img.shields.io/badge/modules-outing%20%7C%20career%20%7C%20export-2c7a7b.svg">
 </p>
@@ -21,7 +21,7 @@
   <a href="#visual-demo">Visual Demo</a> |
   <a href="#quick-start">Install</a> |
   <a href="#what-it-does">What It Does</a> |
-  <a href="#whats-new-in-ver2">What's New in ver2</a> |
+  <a href="#whats-new-in-ver210">What's New in ver2.1.0</a> |
   <a href="#demos">Demos</a> |
   <a href="#web-prompt">Web Prompt</a> |
   <a href="#local-data-and-privacy">Local Data and Privacy</a> |
@@ -81,15 +81,15 @@ Recent hardening focus areas:
 | **Care preparation** | Notes for doctors, therapists, school services, workplace support, urgent care, or emergency care. |
 | **Local memory** | Optional consented logs for mood records, daily summaries, support contacts, and trend summaries. |
 | **Web fallback** | A standalone prompt for browser-based LLMs when the local skill is unavailable. |
-| **Gentle Outing Planner (ver2)** | Nearby short outings, city micro-trips, and condition-gated cross-city or overnight plans. |
-| **Roundtrip Export (ver2)** | POI-rich itinerary export for copy, screenshot, OCR, and local HTML import. |
-| **Career Compass (ver2)** | Low-burden career-direction clarification tied to current emotional load. |
-| **Job Market Browser (ver2)** | Browser-based job-post collection with explicit consent checkpoints. |
-| **Local Code Career Profile (ver2)** | Evidence-based skill profiling from user-authorized local projects only. |
+| **Gentle Outing Planner (ver2.1.0)** | Nearby short outings, city micro-trips, and condition-gated cross-city or overnight plans. |
+| **Roundtrip Export (ver2.1.0)** | POI-rich itinerary export for copy, screenshot, OCR, and local HTML import. |
+| **Career Compass (ver2.1.0)** | Low-burden career-direction clarification tied to current emotional load. |
+| **Job Market Browser (ver2.1.0)** | Browser-based job-post collection with explicit consent checkpoints. |
+| **Local Code Career Profile (ver2.1.0)** | Evidence-based skill profiling from user-authorized local projects only. |
 
 ---
 
-## What's New in ver2
+## What's New in ver2.1.0
 
 - Added two optional recovery modules under the same safety framework: `Gentle Outing Planner`, `Career Compass`.
 - Added roundtrip itinerary export pipeline: `scripts/export_roundtrip_itinerary.py`, `scripts/validate_itinerary_export.py`.
@@ -200,7 +200,7 @@ That sounds exhausting, especially if this has been going on for several days. I
 If you want, I can help you make a short care note for a doctor or therapist: how long this has lasted, what changed in sleep/appetite, how it affects your day, and what you want to ask.
 ```
 
-### Demo 2: ver2 gentle outing planning
+### Demo 2: ver2.1.0 gentle outing planning
 
 ```text
 User:
@@ -213,7 +213,7 @@ Default draft: a 40-minute route with one open-air point, one sit-down point, an
 If you can, give me only a rough area (city or district). If not, I can give you a generic safe version first.
 ```
 
-### Demo 3: ver2 career clarification + job fit
+### Demo 3: ver2.1.0 career clarification + job fit
 
 ```text
 User:
@@ -227,7 +227,7 @@ Let's keep this low-pressure. We can do two tracks in parallel:
 You only need to choose one first step: "scan projects" or "check market".
 ```
 
-### Demo 4: ver2 roundtrip export flow
+### Demo 4: ver2.1.0 roundtrip export flow
 
 ```bash
 # 1) Export POI-rich itinerary assets
@@ -262,7 +262,7 @@ Data domains:
 | Domain | Files |
 |---|---|
 | Mental-health logs | `event_log.csv`, `daily_summary.csv`, `support_contacts.csv` |
-| ver2 outing/career/job stores | `outing_preferences.json`, `career_profile.json`, `job_posts_cache.json`, `exports/roundtrip/` |
+| ver2.1.0 outing/career/job stores | `outing_preferences.json`, `career_profile.json`, `job_posts_cache.json`, `exports/roundtrip/` |
 
 Privacy defaults:
 
