@@ -108,6 +108,21 @@ JOB_POSTS_CACHE_DEFAULT = {
     "posts": [],
 }
 
+OPENCLAW_DEDICATED_BOTS_DEFAULT = {
+    "version": 1,
+    "updated_at": "",
+    "consent": False,
+    "active_bot_id": "",
+    "bots": [],
+    "routing_policy": {
+        "mental_care_only": True,
+        "require_explicit_skill_activation": False,
+        "keep_records_local": True,
+        "share_records_with_openclaw_channels": False,
+    },
+    "notes": "Stores non-secret OpenClaw channel/bot routing metadata only. Keep bot tokens in OpenClaw or channel provider secret stores.",
+}
+
 _GENERIC_ROUTE_FALLBACK = "itinerary"
 
 EVENT_SCORE_FIELDS = {"mood_score", "anxiety_score", "energy_score", "function_score"}
@@ -170,6 +185,7 @@ def ensure_data_dir(data_dir: str | None = None) -> Path:
     ensure_json(root / "outing_preferences.json", OUTING_PREFERENCES_DEFAULT)
     ensure_json(root / "career_profile.json", CAREER_PROFILE_DEFAULT)
     ensure_json(root / "job_posts_cache.json", JOB_POSTS_CACHE_DEFAULT)
+    ensure_json(root / "openclaw_dedicated_bots.json", OPENCLAW_DEDICATED_BOTS_DEFAULT)
 
     (root / "exports" / "roundtrip").mkdir(parents=True, exist_ok=True)
     return root

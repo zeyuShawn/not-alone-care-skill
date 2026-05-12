@@ -1,4 +1,4 @@
-﻿# External Data Privacy
+# External Data Privacy
 
 Use this file whenever working with external websites, browser automation, OCR from web pages, or job-platform data.
 
@@ -16,11 +16,12 @@ Mental-health CSV:
 - `daily_summary.csv`
 - `support_contacts.csv`
 
-ver2.1.0 non-clinical JSON:
+2.0.0 non-clinical JSON:
 
 - `outing_preferences.json`
 - `career_profile.json`
 - `job_posts_cache.json`
+- `openclaw_dedicated_bots.json`
 - `exports/roundtrip/*`
 
 ## Mandatory Consent Checkpoints

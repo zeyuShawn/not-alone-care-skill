@@ -11,7 +11,7 @@
 <p>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
   <img alt="Safety first" src="https://img.shields.io/badge/safety--first-crisis--aware-blue.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-ver2.1.0-black.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-2.0.0-black.svg">
   <img alt="Local first" src="https://img.shields.io/badge/local--first-privacy--minded-5f4bb6.svg">
   <img alt="Modules" src="https://img.shields.io/badge/modules-outing%20%7C%20career%20%7C%20export-2c7a7b.svg">
 </p>
@@ -20,8 +20,9 @@
   <a href="#visual-demo">Visual Demo</a> |
   <a href="#install">Install</a> |
   <a href="#quick-start">Quick Start</a> |
+  <a href="#openclaw-bot-install">OpenClaw Bot Install</a> |
   <a href="#what-it-does">What It Does</a> |
-  <a href="#whats-new-in-ver210">What's New in ver2.1.0</a> |
+  <a href="#whats-new-in-200">What's New in 2.0.0</a> |
   <a href="#demos">Demos</a> |
   <a href="#web-prompt">Web Prompt</a> |
   <a href="#local-data-and-privacy">Local Data and Privacy</a> |
@@ -32,7 +33,7 @@
 
 ---
 
-`mental-care-skill` is a mental-health support skill, not a diagnosis or treatment tool.
+`mental-care-skill` is a mental-health support skill, not a diagnosis or treatment tool. Current repository version: `2.0.0` (also recorded in `VERSION`).
 
 Core principle: the user should not carry extra cognitive load when distressed. The assistant routes risk first, gives a default low-burden step, and only then introduces optional modules when safe.
 
@@ -86,7 +87,7 @@ Recent hardening focus areas:
 - CSV log values are escaped before writing so spreadsheet apps do not execute user-provided formulas when logs are opened manually.
 - Profile-store updates and deletions require explicit write consent through `scripts/manage_profile_data.py`.
 - Date-scoped deletions reject malformed or inverted date ranges before touching local files.
-- The recommended confidence loop is: inspect changes, run the test suite, compile scripts, validate any local data directory, then repeat after every functional change.
+- The recommended confidence loop is: inspect changes, run the test suite, compile scripts, validate any local data directory, test OpenClaw bridge installation in a temporary directory, then repeat after every functional change.
 
 ## What It Does
 
@@ -98,16 +99,20 @@ Recent hardening focus areas:
 | **Care preparation** | Notes for doctors, therapists, school services, workplace support, urgent care, or emergency care. |
 | **Local memory** | Optional consented logs for mood records, daily summaries, support contacts, and trend summaries. |
 | **Web fallback** | A standalone prompt for browser-based LLMs when the local skill is unavailable. |
-| **Gentle Outing Planner (ver2.1.0)** | Nearby short outings, city micro-trips, and condition-gated cross-city or overnight plans. |
-| **Roundtrip Export (ver2.1.0)** | POI-rich itinerary export for copy, screenshot, OCR, and local HTML import. |
-| **Career Compass (ver2.1.0)** | Low-burden career-direction clarification tied to current emotional load. |
-| **Job Market Browser (ver2.1.0)** | Browser-based job-post collection with explicit consent checkpoints. |
-| **Local Code Career Profile (ver2.1.0)** | Evidence-based skill profiling from user-authorized local projects only. |
+| **OpenClaw Bot (2.0.0)** | One-command bridge install for OpenClaw channel bots and local designation of a dedicated mental-care specialist. |
+| **Gentle Outing Planner (2.0.0)** | Nearby short outings, city micro-trips, and condition-gated cross-city or overnight plans. |
+| **Roundtrip Export (2.0.0)** | POI-rich itinerary export for copy, screenshot, OCR, and local HTML import. |
+| **Career Compass (2.0.0)** | Low-burden career-direction clarification tied to current emotional load. |
+| **Job Market Browser (2.0.0)** | Browser-based job-post collection with explicit consent checkpoints. |
+| **Local Code Career Profile (2.0.0)** | Evidence-based skill profiling from user-authorized local projects only. |
 
 ---
 
-## What's New in ver2.1.0
+## What's New in 2.0.0
 
+- Added OpenClaw integration for Feishu/Lark, Discord, Telegram, and other OpenClaw channel bots.
+- Added one-command OpenClaw bridge installer: `scripts/install_openclaw.sh`.
+- Added local dedicated-bot database and configuration CLI: `openclaw_dedicated_bots.json` plus `scripts/configure_openclaw_bot.py`.
 - Added two optional recovery modules under the same safety framework: `Gentle Outing Planner`, `Career Compass`.
 - Added roundtrip itinerary export pipeline: `scripts/export_roundtrip_itinerary.py`, `scripts/validate_itinerary_export.py`.
 - Added career data and analysis pipeline: `scripts/collect_job_posts_browser.py`, `scripts/normalize_job_posts.py`, `scripts/analyze_local_code_profile.py`, `scripts/rank_job_fit.py`, `scripts/manage_profile_data.py`.
@@ -152,6 +157,37 @@ Validate local data files and schema assumptions:
 ```bash
 python scripts/validate_local_data.py
 ```
+
+---
+
+## OpenClaw Bot Install
+
+OpenClaw can act as the chat-channel gateway while `mental-care-skill` remains the safety policy. The project includes code-driven setup for Feishu/Lark, Discord, Telegram, Slack, WhatsApp, Teams, and other OpenClaw-supported channel bots.
+
+Install the OpenClaw bridge and optionally designate a bot as the dedicated mental-care specialist:
+
+```bash
+bash scripts/install_openclaw.sh --channel telegram --bot-id mental-care-telegram --consent true
+```
+
+If you also want the script to run OpenClaw's gateway installer and onboarding on the local machine:
+
+```bash
+bash scripts/install_openclaw.sh --install-gateway --onboard --channel feishu --bot-id feishu-care --consent true
+```
+
+Designate or update a specific existing OpenClaw bot without reinstalling the bridge:
+
+```bash
+python scripts/configure_openclaw_bot.py set \
+  --bot-id mental-care-discord \
+  --channel discord \
+  --display-name "Mental Care" \
+  --allowed-user-ids '["123456"]' \
+  --consent true
+```
+
+The local database file is `~/mental_care_data/openclaw_dedicated_bots.json`. It stores only non-secret routing metadata; keep bot tokens, provider API keys, and channel secrets in OpenClaw or provider secret stores.
 
 ---
 
@@ -205,7 +241,7 @@ That sounds exhausting, especially if this has been going on for several days. I
 If you want, I can help you make a short care note for a doctor or therapist: how long this has lasted, what changed in sleep/appetite, how it affects your day, and what you want to ask.
 ```
 
-### Demo 2: ver2.1.0 gentle outing planning
+### Demo 2: 2.0.0 gentle outing planning
 
 ```text
 User:
@@ -218,7 +254,7 @@ Default draft: a 40-minute route with one open-air point, one sit-down point, an
 If you can, give me only a rough area (city or district). If not, I can give you a generic safe version first.
 ```
 
-### Demo 3: ver2.1.0 career clarification + job fit
+### Demo 3: 2.0.0 career clarification + job fit
 
 ```text
 User:
@@ -232,7 +268,7 @@ Let's keep this low-pressure. We can do two tracks in parallel:
 You only need to choose one first step: "scan projects" or "check market".
 ```
 
-### Demo 4: ver2.1.0 roundtrip export flow
+### Demo 4: 2.0.0 roundtrip export flow
 
 ```bash
 # 1) Export POI-rich itinerary assets
@@ -267,7 +303,7 @@ Data domains:
 | Domain | Files |
 |---|---|
 | Mental-health logs | `event_log.csv`, `daily_summary.csv`, `support_contacts.csv` |
-| ver2.1.0 outing/career/job stores | `outing_preferences.json`, `career_profile.json`, `job_posts_cache.json`, `exports/roundtrip/` |
+| 2.0.0 outing/career/job/OpenClaw stores | `outing_preferences.json`, `career_profile.json`, `job_posts_cache.json`, `openclaw_dedicated_bots.json`, `exports/roundtrip/` |
 
 Privacy defaults:
 
