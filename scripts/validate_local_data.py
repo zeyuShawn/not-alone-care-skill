@@ -10,6 +10,7 @@ from _local_data import (
     DAILY_FIELDS,
     EVENT_FIELDS,
     JOB_POSTS_CACHE_DEFAULT,
+    OPENCLAW_DEDICATED_BOTS_DEFAULT,
     OUTING_PREFERENCES_DEFAULT,
     ensure_data_dir,
     read_json,
@@ -22,6 +23,7 @@ JSON_STORES = {
     "outing_preferences.json": OUTING_PREFERENCES_DEFAULT,
     "career_profile.json": CAREER_PROFILE_DEFAULT,
     "job_posts_cache.json": JOB_POSTS_CACHE_DEFAULT,
+    "openclaw_dedicated_bots.json": OPENCLAW_DEDICATED_BOTS_DEFAULT,
 }
 
 

@@ -9,6 +9,7 @@ from typing import Any, Dict
 from _local_data import (
     CAREER_PROFILE_DEFAULT,
     JOB_POSTS_CACHE_DEFAULT,
+    OPENCLAW_DEDICATED_BOTS_DEFAULT,
     OUTING_PREFERENCES_DEFAULT,
     ensure_data_dir,
     now_iso,
@@ -21,6 +22,7 @@ STORE_DEFAULTS = {
     "outing": ("outing_preferences.json", OUTING_PREFERENCES_DEFAULT),
     "career": ("career_profile.json", CAREER_PROFILE_DEFAULT),
     "jobs": ("job_posts_cache.json", JOB_POSTS_CACHE_DEFAULT),
+    "openclaw": ("openclaw_dedicated_bots.json", OPENCLAW_DEDICATED_BOTS_DEFAULT),
 }
 
 
@@ -77,7 +79,7 @@ def resolve_store(root: Path, store_key: str) -> tuple[Path, Dict[str, Any]]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="View/update/delete ver2.1.0 JSON stores.")
+    parser = argparse.ArgumentParser(description="View/update/delete 2.0.0 JSON stores.")
     parser.add_argument("--data-dir", default=None)
     parser.add_argument("--store", choices=STORE_DEFAULTS.keys(), required=True)
 

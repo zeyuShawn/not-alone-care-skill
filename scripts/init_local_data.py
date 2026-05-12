@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import json
@@ -29,6 +29,7 @@ def main() -> int:
             "outing_preferences.json",
             "career_profile.json",
             "job_posts_cache.json",
+            "openclaw_dedicated_bots.json",
         ],
         "directories": [
             "exports/roundtrip",

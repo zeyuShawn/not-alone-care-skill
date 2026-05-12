@@ -315,6 +315,81 @@ class ScriptSafetyTests(unittest.TestCase):
             )
             self.assertNotEqual(inverted.returncode, 0)
 
+
+    def test_openclaw_local_store_and_designated_bot_require_consent(self) -> None:
+        with tempfile.TemporaryDirectory() as data_dir:
+            run_script(["scripts/init_local_data.py", "--data-dir", data_dir])
+            openclaw_store = Path(data_dir) / "openclaw_dedicated_bots.json"
+            self.assertTrue(openclaw_store.exists())
+
+            refused = run_script(
+                [
+                    "scripts/configure_openclaw_bot.py",
+                    "--data-dir",
+                    data_dir,
+                    "set",
+                    "--bot-id",
+                    "care-telegram",
+                    "--channel",
+                    "telegram",
+                ],
+                check=False,
+            )
+            self.assertNotEqual(refused.returncode, 0)
+            self.assertIn("--consent true", refused.stderr)
+
+            ok = run_script(
+                [
+                    "scripts/configure_openclaw_bot.py",
+                    "--data-dir",
+                    data_dir,
+                    "set",
+                    "--bot-id",
+                    "care-telegram",
+                    "--channel",
+                    "telegram",
+                    "--display-name",
+                    "Mental Care",
+                    "--allowed-user-ids",
+                    '["u123"]',
+                    "--consent",
+                    "true",
+                ]
+            )
+            self.assertIn('"active_bot_id": "care-telegram"', ok.stdout)
+            payload = json.loads(openclaw_store.read_text(encoding="utf-8"))
+            self.assertEqual(payload["active_bot_id"], "care-telegram")
+            self.assertTrue(payload["routing_policy"]["keep_records_local"])
+            self.assertEqual(payload["bots"][0]["allowed_user_ids"], ["u123"])
+
+    def test_openclaw_installer_creates_bridge_without_gateway_network(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            openclaw_home = tmp_path / "openclaw"
+            data_dir = tmp_path / "data"
+            run_command(
+                [
+                    "bash",
+                    "scripts/install_openclaw.sh",
+                    "--source-dir",
+                    str(ROOT),
+                    "--openclaw-home",
+                    str(openclaw_home),
+                    "--data-dir",
+                    str(data_dir),
+                    "--channel",
+                    "discord",
+                    "--bot-id",
+                    "care-discord",
+                    "--consent",
+                    "true",
+                ]
+            )
+            self.assertTrue((openclaw_home / "skills" / "mental-care-skill" / "SKILL.md").exists())
+            self.assertTrue((openclaw_home / "agents" / "mental-care-skill.agent.md").exists())
+            payload = json.loads((data_dir / "openclaw_dedicated_bots.json").read_text(encoding="utf-8"))
+            self.assertEqual(payload["active_bot_id"], "care-discord")
+
     def test_installer_creates_ide_bridge_files(self) -> None:
         with tempfile.TemporaryDirectory() as target:
             run_command(

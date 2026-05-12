@@ -11,7 +11,7 @@
 <p>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
   <img alt="Safety first" src="https://img.shields.io/badge/safety--first-crisis--aware-blue.svg">
-  <img alt="Version" src="https://img.shields.io/badge/version-ver2.1.0-black.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-2.0.0-black.svg">
   <img alt="Local first" src="https://img.shields.io/badge/local--first-privacy--minded-5f4bb6.svg">
 </p>
 
@@ -19,6 +19,7 @@
   <a href="#可视化演示">可视化演示</a> |
   <a href="#一键安装到-vscode--cursor--trae">一键安装</a> |
   <a href="#快速开始">快速开始</a> |
+  <a href="#openclaw-机器人安装">OpenClaw 机器人</a> |
   <a href="#它能做什么">它能做什么</a> |
   <a href="#本地数据与隐私">本地数据与隐私</a> |
   <a href="#安全边界">安全边界</a>
@@ -28,7 +29,7 @@
 
 ---
 
-`mental-care-skill` 是一个心理健康支持 Skill，不是诊断工具，不是治疗工具，也不能替代急救、危机热线、医生、心理咨询师或身边可信任的人。
+`mental-care-skill` 是一个心理健康支持 Skill，不是诊断工具，不是治疗工具，也不能替代急救、危机热线、医生、心理咨询师或身边可信任的人。当前仓库版本：`2.0.0`（也记录在 `VERSION`）。
 
 核心原则：人在痛苦、焦虑、低落或慌乱时，不应该再被要求选择复杂模式。助手会先静默做安全路由，给出一个默认的低负担步骤，然后在安全时才引入自助练习、就医准备、支持联系人、轻松出门或职业方向模块。
 
@@ -127,6 +128,37 @@ python scripts/validate_local_data.py
 
 ---
 
+## OpenClaw 机器人安装
+
+OpenClaw 只作为聊天渠道网关，`mental-care-skill` 仍然负责安全策略。支持通过代码把飞书/Lark、Discord、Telegram、Slack、WhatsApp、Teams 等 OpenClaw 渠道机器人接成 mental 护理入口。
+
+一键安装 OpenClaw bridge，并把某个机器人标记为专门的 mental 护理专员：
+
+```bash
+bash scripts/install_openclaw.sh --channel telegram --bot-id mental-care-telegram --consent true
+```
+
+如果希望脚本同时运行 OpenClaw 网关安装和 onboarding：
+
+```bash
+bash scripts/install_openclaw.sh --install-gateway --onboard --channel feishu --bot-id feishu-care --consent true
+```
+
+只设置某个已有机器人为 mental 护理专员：
+
+```bash
+python scripts/configure_openclaw_bot.py set \
+  --bot-id mental-care-discord \
+  --channel discord \
+  --display-name "Mental Care" \
+  --allowed-user-ids '["123456"]' \
+  --consent true
+```
+
+本地数据库文件是 `~/mental_care_data/openclaw_dedicated_bots.json`。它只保存非密钥路由信息；机器人 token、模型 API key、渠道密钥应保存在 OpenClaw 或服务商密钥系统中。
+
+---
+
 ## 它能做什么
 
 | 模块 | 支持内容 |
@@ -137,6 +169,7 @@ python scripts/validate_local_data.py
 | **就医准备** | 为医生、咨询师、学校服务、职场支持、急诊准备简短说明。 |
 | **本地记忆** | 可选且需同意的心情记录、每日摘要、支持联系人、趋势摘要。 |
 | **网页版备用 Prompt** | 本地 Skill 不可用时，给浏览器 LLM 使用的独立 Prompt。 |
+| **OpenClaw Bot (2.0.0)** | 通过一条命令安装 OpenClaw bridge，并在本地指定专门的 mental 护理机器人。 |
 | **Gentle Outing Planner** | 近距离短路线、城市微出行、在条件允许时的跨城/过夜计划。 |
 | **Roundtrip Export** | 导出包含 POI 的路线文本、截图友好文本、OCR 文本和本地 HTML。 |
 | **Career Compass** | 在低负担前提下梳理职业方向与下一步。 |
@@ -162,6 +195,7 @@ python scripts/validate_local_data.py
 - CSV 日志写入前会转义可能被电子表格当作公式执行的单元格。
 - profile store 更新/删除需要 `--consent true`。
 - 删除日期会先校验格式，并拒绝倒置范围。
+- OpenClaw bot 路由只保存非密钥元数据，且设置/删除必须显式同意。
 
 ---
 
@@ -176,7 +210,7 @@ python scripts/validate_local_data.py
 | 数据域 | 文件 |
 |---|---|
 | 心理健康日志 | `event_log.csv`, `daily_summary.csv`, `support_contacts.csv` |
-| ver2.1.0 出门/职业/职位数据 | `outing_preferences.json`, `career_profile.json`, `job_posts_cache.json`, `exports/roundtrip/` |
+| 2.0.0 出门/职业/职位/OpenClaw 数据 | `outing_preferences.json`, `career_profile.json`, `job_posts_cache.json`, `openclaw_dedicated_bots.json`, `exports/roundtrip/` |
 
 隐私默认值：
 
@@ -184,7 +218,7 @@ python scripts/validate_local_data.py
 - 每类记录写入前都需要明确同意，除非用户已明确设置持续同意。
 - 写入前校验日期、评分范围和字段名。
 - CSV 单元格会转义，降低电子表格公式注入风险。
-- 心理健康记录不会与外部网站、职位平台或职业数据混用，除非用户明确同意。
+- 心理健康记录不会与外部网站、职位平台、职业数据或 OpenClaw 渠道数据混用，除非用户明确同意。
 - 浏览器收集职位、标准化职位缓存、profile store 更新/删除都需要明确同意。
 - 本地代码职业画像默认不保存绝对路径，除非显式使用 `--include-path`。
 

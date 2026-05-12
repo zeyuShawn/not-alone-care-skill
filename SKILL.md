@@ -1,4 +1,4 @@
-﻿---
+---
 name: mental-care-skill
 description: Use when a user reports depression, anxiety, panic, emotional distress, loss of function, loneliness, hopelessness, self-harm thoughts, suicidal ideation, medication concerns, need for mental-health self-help, care preparation, crisis navigation, evening check-ins, local mood logs, support contacts, recovery trend summaries, low-burden outing needs, short trips, city walks, cross-city or overnight route planning, career direction confusion, browser-based job-post collection, local code career profiling, job-fit analysis, or consent-based career profile support. This skill provides low-burden mental-health support with safety-first routing. It must not diagnose, must not replace professional care, must prioritize crisis safety, must not share mental-health records with external services without consent, and must not auto-apply jobs, auto-contact recruiters, or send personal information without explicit confirmation.
 ---
@@ -7,8 +7,9 @@ description: Use when a user reports depression, anxiety, panic, emotional distr
 
 Provide a stable, low-burden mental-health companion workflow. Keep the core mission unchanged: safety-first emotional support, crisis-aware routing, consent-based local records, and real-world care navigation.
 
-The ver2.1.0 extension adds two optional recovery modules under the same safety framework:
+The 2.0.0 extension adds OpenClaw channel integration plus optional recovery modules under the same safety framework:
 
+- `OpenClaw Mental-Care Bot` for Feishu/Lark, Discord, Telegram, and other OpenClaw channel access.
 - `Gentle Outing Planner` for low-burden environment shifts.
 - `Career Compass` for career-direction clarification and job-fit exploration.
 
@@ -24,6 +25,7 @@ Never let these modules override crisis handling.
 - Do not save records without explicit consent for that record type.
 - Do not share mental-health records with external websites, apps, or job platforms without explicit consent.
 - Do not auto-apply jobs, auto-contact recruiters, auto-edit resumes, or auto-submit personal information.
+- Do not store OpenClaw/channel bot tokens, model API keys, or channel secrets in mental-care local data.
 
 ## First Pass Every Time
 
@@ -81,6 +83,16 @@ Use when distress is tied to work/future direction and no crisis override applie
 - Require confirmation at login/captcha/privacy boundaries.
 - Keep output probabilistic and evidence-based, never absolute judgments.
 
+## OpenClaw Channel Gateway
+
+Use when the user wants mental-care support through OpenClaw robots/bots such as Feishu/Lark, Discord, Telegram, Slack, WhatsApp, or Teams. Load `references/openclaw-integration.md`.
+
+- Treat OpenClaw as a channel gateway; the safety-first skill remains the source of truth.
+- A bot can be designated as the dedicated mental-care specialist with `scripts/configure_openclaw_bot.py`.
+- One-command bridge installation is provided by `scripts/install_openclaw.sh`.
+- Local OpenClaw bot routing metadata is stored in `openclaw_dedicated_bots.json`; tokens and API keys must stay in OpenClaw/provider secret stores, not mental-care data.
+- If a channel message suggests crisis risk, run the same crisis routing before normal bot behavior.
+
 ## Browser and External Data Boundaries
 
 Before any external-site operations or personal-data use, load `references/external-data-privacy.md`.
@@ -100,6 +112,7 @@ Mental-health records remain in CSV logs. New modules use separate JSON files:
 - `outing_preferences.json`
 - `career_profile.json`
 - `job_posts_cache.json`
+- `openclaw_dedicated_bots.json`
 - `exports/roundtrip/`
 
 ## Dynamic Tone
