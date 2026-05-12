@@ -13,7 +13,7 @@ Mental-health records are sensitive even in local storage.
 
 ## Storage Isolation Rule
 
-Mental-health CSV and ver2.1.0 non-clinical JSON must stay separated.
+Mental-health CSV and 2.0.0 non-clinical JSON must stay separated.
 
 Mental-health CSV:
 
@@ -21,14 +21,15 @@ Mental-health CSV:
 - `daily_summary.csv`
 - `support_contacts.csv`
 
-ver2.1.0 JSON:
+2.0.0 JSON:
 
 - `outing_preferences.json`
 - `career_profile.json`
 - `job_posts_cache.json`
+- `openclaw_dedicated_bots.json`
 - `exports/roundtrip/*`
 
-Do not write outing/career/job payloads into mental-health CSV.
+Do not write outing/career/job/OpenClaw routing payloads into mental-health CSV.
 
 ## Consent Before Saving
 

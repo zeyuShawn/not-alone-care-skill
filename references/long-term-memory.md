@@ -1,4 +1,4 @@
-﻿# Long-Term Memory
+# Long-Term Memory
 
 Use local memory for continuity and trend support, not raw therapy transcript storage.
 
@@ -16,11 +16,12 @@ Mental-health CSV:
 - `daily_summary.csv`
 - `support_contacts.csv`
 
-ver2.1.0 JSON (separate from mental-health logs):
+2.0.0 JSON (separate from mental-health logs):
 
 - `outing_preferences.json`
 - `career_profile.json`
 - `job_posts_cache.json`
+- `openclaw_dedicated_bots.json`
 - `exports/roundtrip/`
 
 ## Event Log Fields
@@ -43,13 +44,13 @@ date,mood_avg,anxiety_avg,energy_avg,sleep_hours,function_score,main_patterns,wa
 
 ## JSON Management Rule
 
-All ver2.1.0 JSON stores must support:
+All 2.0.0 JSON stores must support:
 
 - view,
 - update,
 - delete.
 
-Only save `outing_preferences.json` or `career_profile.json` after consent.
+Only save `outing_preferences.json`, `career_profile.json`, or `openclaw_dedicated_bots.json` updates after consent.
 
 ## Trend Summary Guardrails
 
